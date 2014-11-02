@@ -22,6 +22,7 @@ class Render
         void    setXOffset(double offset);
         double  getYOffset();
         void    setYOffset(double offset);
+        void    toPhysics(int rendX, int rendY, double& physX, double& physY);
 
     protected:
     private:
@@ -34,6 +35,7 @@ class Render
         int _width = 0;
         double _xOffset = 0;
         double _yOffset = 0;
+        double _colorThreshold = 0.0000001L;
 };
 
 #endif // RENDER_H

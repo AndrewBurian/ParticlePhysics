@@ -31,3 +31,4 @@ bin/*
 # Code::Blocks
 *.cbp
 *.layout
+*.depend

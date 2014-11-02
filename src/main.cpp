@@ -6,6 +6,7 @@
 #include "render.h"
 
 void runEngine();
+void runRender();
 void addParticle(int x, int y);
 void removeParticle(int x, int y);
 void printParticle(int x, int y);
@@ -16,6 +17,7 @@ Render renderEngine(physicsEngine);
 int main()
 {
     int running = 1;
+    int pause = 0;
 
     SDL_Event e;
 
@@ -61,19 +63,24 @@ int main()
                     break;
 
                 case SDLK_LEFT:
-                    renderEngine.setXOffset(renderEngine.getXOffset() - (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setXOffset(renderEngine.getXOffset() + (renderEngine.getWidth() * 0.1));
                     break;
 
                 case SDLK_RIGHT:
-                    renderEngine.setXOffset(renderEngine.getXOffset() + (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setXOffset(renderEngine.getXOffset() - (renderEngine.getWidth() * 0.1));
                     break;
 
                 case SDLK_UP:
-                    renderEngine.setYOffset(renderEngine.getYOffset() + (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setYOffset(renderEngine.getYOffset() + (renderEngine.getHeight() * 0.1));
                     break;
 
                 case SDLK_DOWN:
-                    renderEngine.setYOffset(renderEngine.getYOffset() - (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setYOffset(renderEngine.getYOffset() - (renderEngine.getHeight() * 0.1));
+                    break;
+
+                case SDLK_p:
+                    pause = (pause ? 0 : 1);
+                    printf("%s\n", (pause ? "Paused" : "Resumed"));
                     break;
                 }
 			}
@@ -95,7 +102,10 @@ int main()
                 }
 			}
 		}
-        runEngine();
+		if(!pause){
+            runEngine();
+        }
+        runRender();
     }
 
     return 0;
@@ -103,30 +113,37 @@ int main()
 
 void runEngine(){
 
-    // This will later be implemented in the physics engine itself.
     physicsEngine.applyAll();
     physicsEngine.tick();
     physicsEngine.collisions(COLLISION_BEHAVIOR_INELASTIC);
+
+}
+
+void runRender(){
+
     renderEngine.cls();
     renderEngine.all();
     renderEngine.refresh();
+
 }
 
 void addParticle(int x, int y){
 
-    double particleX = (x - (0.5 * renderEngine.getWidth())) * renderEngine.getScalingFactor();
-    double particleY = ((0.5 * renderEngine.getHeight()) - y) * renderEngine.getScalingFactor();
+    double particleX, particleY;
+
+    renderEngine.toPhysics(x, y, particleX, particleY);
 
     printf("Creating particle at (%d, %d)\n", (int)particleX, (int)particleY);
 
-    physicsEngine.addParticle(particleX, particleY, 0, 0, 10000, 0, 0);
+    physicsEngine.addParticle(particleX, particleY, 0, 0, 50, 0.0000001 * ((rand() % 3) - 1), 0);
     physicsEngine.collisions(COLLISION_BEHAVIOR_INELASTIC);
 }
 
 void removeParticle(int x, int y){
 
-    double particleX = (x - (0.5 * renderEngine.getWidth())) * renderEngine.getScalingFactor();
-    double particleY = ((0.5 * renderEngine.getHeight()) - y) * renderEngine.getScalingFactor();
+    double particleX, particleY;
+
+    renderEngine.toPhysics(x, y, particleX, particleY);
 
     printf("Removing particle at (%d, %d)\n", (int)particleX, (int)particleY);
     physicsEngine.removeParticle(physicsEngine.getParticleAt(particleX, particleY));
@@ -136,8 +153,9 @@ void printParticle(int x, int y){
 
     Physics::particle particle = {0};
 
-    double particleX = (x - (0.5 * renderEngine.getWidth())) * renderEngine.getScalingFactor();
-    double particleY = ((0.5 * renderEngine.getHeight()) - y) * renderEngine.getScalingFactor();
+    double particleX, particleY;
+
+    renderEngine.toPhysics(x, y, particleX, particleY);
 
     physicsEngine.getParticle(physicsEngine.getParticleAt(particleX, particleY), &particle);
 
@@ -156,4 +174,3 @@ void printParticle(int x, int y){
     fflush(stdout);
 
 }
-
