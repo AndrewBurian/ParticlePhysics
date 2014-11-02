@@ -6,6 +6,7 @@
 #include "render.h"
 
 void runEngine();
+void runRender();
 void addParticle(int x, int y);
 void removeParticle(int x, int y);
 void printParticle(int x, int y);
@@ -16,6 +17,7 @@ Render renderEngine(physicsEngine);
 int main()
 {
     int running = 1;
+    int pause = 0;
 
     SDL_Event e;
 
@@ -75,6 +77,11 @@ int main()
                 case SDLK_DOWN:
                     renderEngine.setYOffset(renderEngine.getYOffset() - (50 * renderEngine.getScalingFactor()));
                     break;
+
+                case SDLK_p:
+                    pause = (pause ? 0 : 1);
+                    printf("%s\n", (pause ? "Paused" : "Resumed"));
+                    break;
                 }
 			}
 			else if(e.type == SDL_MOUSEBUTTONDOWN){
@@ -95,7 +102,10 @@ int main()
                 }
 			}
 		}
-        runEngine();
+		if(!pause){
+            runEngine();
+        }
+        runRender();
     }
 
     return 0;
@@ -103,13 +113,18 @@ int main()
 
 void runEngine(){
 
-    // This will later be implemented in the physics engine itself.
     physicsEngine.applyAll();
     physicsEngine.tick();
     physicsEngine.collisions(COLLISION_BEHAVIOR_INELASTIC);
+
+}
+
+void runRender(){
+
     renderEngine.cls();
     renderEngine.all();
     renderEngine.refresh();
+
 }
 
 void addParticle(int x, int y){
