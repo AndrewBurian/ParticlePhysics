@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 #define MAX_PARTICLES 256
 #define COLLISION_BEHAVIOR_ELASTIC 1
@@ -53,6 +53,7 @@ class Physics
     protected:
     private:
         double GRAVITATION = 6.77e-11L;
+        double ELECTROSTATIC = 8.987e+9L;
         double DENSITY = 10000;
         double _tickTime = 1;
         size_t  _particleCount;

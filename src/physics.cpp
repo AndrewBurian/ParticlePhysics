@@ -172,6 +172,12 @@ void Physics::applyGravitationForce(PARTICLE_ID a, PARTICLE_ID b){
 
 void Physics::applyElectromagneticForce(PARTICLE_ID a, PARTICLE_ID b){
 
+    double xDist = _xPos[a] - _xPos[b];
+    double yDist = _yPos[a] - _yPos[b];
+    double distance = 0;
+
+    double totalForce = 0;
+
     if(!_ready){
         fprintf(stderr, "physics: Err - not initialized\n");
         return;
@@ -180,7 +186,16 @@ void Physics::applyElectromagneticForce(PARTICLE_ID a, PARTICLE_ID b){
         fprintf(stderr, "physics: Err - applying gravitation between inactive particles\n");
         return;
     }
-    // TODO: all electromagnetism
+
+    distance = sqrt((xDist * xDist) + (yDist * yDist));
+
+    totalForce = ELECTROSTATIC * ((_charge[a] * _charge[b]) / (distance * distance));
+
+    _xForce[a] += totalForce * xDist / distance;
+    _yForce[a] += totalForce * yDist / distance;
+
+    _xForce[b] -= totalForce * xDist / distance;
+    _yForce[b] -= totalForce * yDist / distance;
 }
 
 void Physics::tick(){
@@ -297,12 +312,10 @@ void Physics::collisions(unsigned behavior){
         for(j = i + 1; j < _particleCount; ++j){
             if(_isActive[i] && _isActive[j]){
 
-                dist = abs(_xPos[i] - _xPos[j]);
-                dist += abs(_yPos[i] - _yPos[j]);
+                dist = std::abs(_xPos[i] - _xPos[j]);
+                dist += std::abs(_yPos[i] - _yPos[j]);
                 if(dist < (_size[i] + _size[j])){
                     combineParticles(i, j);
-                    printf("nom\n");
-                    fflush(stdout);
                 }
 
             }
