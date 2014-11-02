@@ -134,7 +134,7 @@ void addParticle(int x, int y){
 
     printf("Creating particle at (%d, %d)\n", (int)particleX, (int)particleY);
 
-    physicsEngine.addParticle(particleX, particleY, 0, 0, 50, 0.0000001, 0);
+    physicsEngine.addParticle(particleX, particleY, 0, 0, 50, 0.0000001 * ((rand() % 3) - 1), 0);
     physicsEngine.collisions(COLLISION_BEHAVIOR_INELASTIC);
 }
 

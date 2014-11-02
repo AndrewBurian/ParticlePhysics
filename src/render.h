@@ -34,6 +34,7 @@ class Render
         int _width = 0;
         double _xOffset = 0;
         double _yOffset = 0;
+        double _colorThreshold = 0.0000001L;
 };
 
 #endif // RENDER_H
