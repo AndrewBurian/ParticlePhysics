@@ -81,8 +81,8 @@ void Render::particle(Physics::particle* particle){
     }
     rect.h = rect.w;
 
-    rect.x = (particle->xPos / _scalingFactor) + (0.5 * _width) - (0.5 * rect.w);
-    rect.y = (0.5 * _height) - (particle->yPos / _scalingFactor) - (0.5 * rect.h);
+    rect.x = (particle->xPos / _scalingFactor) + (0.5 * _width) - (0.5 * rect.w) + _xOffset;
+    rect.y = (0.5 * _height) - (particle->yPos / _scalingFactor) - (0.5 * rect.h) + _yOffset;
 
     int b = 0;
     int r = 0;
@@ -126,4 +126,11 @@ double Render::getXOffset(){
 
 double Render::getYOffset(){
     return _yOffset;
+}
+
+void Render::toPhysics(int rendX, int rendY, double& physX, double& physY){
+
+    physX = (rendX - (0.5 * _width) - _xOffset) * _scalingFactor;
+    physY = ((0.5 * _height) - rendY + _yOffset) * _scalingFactor;
+
 }

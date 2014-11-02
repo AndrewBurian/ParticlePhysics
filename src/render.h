@@ -22,6 +22,7 @@ class Render
         void    setXOffset(double offset);
         double  getYOffset();
         void    setYOffset(double offset);
+        void    toPhysics(int rendX, int rendY, double& physX, double& physY);
 
     protected:
     private:

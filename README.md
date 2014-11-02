@@ -13,5 +13,7 @@ Center Click - Get particle Info
 [+/-] Zoom
 [,/.] Physics Warp
 
+Arrow Keys - Pan
+
 P - Pause
 Esc - Quit

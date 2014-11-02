@@ -63,19 +63,19 @@ int main()
                     break;
 
                 case SDLK_LEFT:
-                    renderEngine.setXOffset(renderEngine.getXOffset() - (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setXOffset(renderEngine.getXOffset() + (renderEngine.getWidth() * 0.1));
                     break;
 
                 case SDLK_RIGHT:
-                    renderEngine.setXOffset(renderEngine.getXOffset() + (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setXOffset(renderEngine.getXOffset() - (renderEngine.getWidth() * 0.1));
                     break;
 
                 case SDLK_UP:
-                    renderEngine.setYOffset(renderEngine.getYOffset() + (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setYOffset(renderEngine.getYOffset() + (renderEngine.getHeight() * 0.1));
                     break;
 
                 case SDLK_DOWN:
-                    renderEngine.setYOffset(renderEngine.getYOffset() - (50 * renderEngine.getScalingFactor()));
+                    renderEngine.setYOffset(renderEngine.getYOffset() - (renderEngine.getHeight() * 0.1));
                     break;
 
                 case SDLK_p:
@@ -129,8 +129,9 @@ void runRender(){
 
 void addParticle(int x, int y){
 
-    double particleX = (x - (0.5 * renderEngine.getWidth())) * renderEngine.getScalingFactor();
-    double particleY = ((0.5 * renderEngine.getHeight()) - y) * renderEngine.getScalingFactor();
+    double particleX, particleY;
+
+    renderEngine.toPhysics(x, y, particleX, particleY);
 
     printf("Creating particle at (%d, %d)\n", (int)particleX, (int)particleY);
 
@@ -140,8 +141,9 @@ void addParticle(int x, int y){
 
 void removeParticle(int x, int y){
 
-    double particleX = (x - (0.5 * renderEngine.getWidth())) * renderEngine.getScalingFactor();
-    double particleY = ((0.5 * renderEngine.getHeight()) - y) * renderEngine.getScalingFactor();
+    double particleX, particleY;
+
+    renderEngine.toPhysics(x, y, particleX, particleY);
 
     printf("Removing particle at (%d, %d)\n", (int)particleX, (int)particleY);
     physicsEngine.removeParticle(physicsEngine.getParticleAt(particleX, particleY));
@@ -151,8 +153,9 @@ void printParticle(int x, int y){
 
     Physics::particle particle = {0};
 
-    double particleX = (x - (0.5 * renderEngine.getWidth())) * renderEngine.getScalingFactor();
-    double particleY = ((0.5 * renderEngine.getHeight()) - y) * renderEngine.getScalingFactor();
+    double particleX, particleY;
+
+    renderEngine.toPhysics(x, y, particleX, particleY);
 
     physicsEngine.getParticle(physicsEngine.getParticleAt(particleX, particleY), &particle);
 
@@ -171,4 +174,3 @@ void printParticle(int x, int y){
     fflush(stdout);
 
 }
-
