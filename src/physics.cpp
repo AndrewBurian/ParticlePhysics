@@ -312,8 +312,9 @@ void Physics::collisions(unsigned behavior){
         for(j = i + 1; j < _particleCount; ++j){
             if(_isActive[i] && _isActive[j]){
 
-                dist = std::abs(_xPos[i] - _xPos[j]);
-                dist += std::abs(_yPos[i] - _yPos[j]);
+                dist = (_xPos[i] - _xPos[j]) * (_xPos[i] - _xPos[j]); // a^2
+                dist += (_yPos[i] - _yPos[j]) * (_yPos[i] - _yPos[j]); // *b^2
+                dist = sqrt(dist); // = c^2
                 if(dist < (_size[i] + _size[j])){
                     combineParticles(i, j);
                 }
