@@ -27,6 +27,9 @@ int main()
 
     physicsEngine.init(100);
 
+    //physicsEngine.addParticle(-100,0,0.2,0,1000,0,0);
+    //physicsEngine.addParticle( 100,0,-0.2,0,1000,0,0);
+
     while (running){
 		//check if window is closed
 		while (SDL_PollEvent(&e)){
@@ -115,7 +118,7 @@ void runEngine(){
 
     physicsEngine.applyAll();
     physicsEngine.tick();
-    physicsEngine.collisions(COLLISION_BEHAVIOR_INELASTIC);
+    physicsEngine.collisions(COLLISION_BEHAVIOR_ELASTIC);
 
 }
 

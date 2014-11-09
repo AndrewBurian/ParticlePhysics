@@ -39,6 +39,7 @@ class Physics
         PARTICLE_ID addParticle(double xPos, double yPos, double xVel, double yVel, double mass, double charge, int isStationary);
         void        removeParticle(PARTICLE_ID particle);
         PARTICLE_ID combineParticles(PARTICLE_ID a, PARTICLE_ID b);
+        void        bounceParticles(PARTICLE_ID a, PARTICLE_ID b);
         void        applyGravitationForce(PARTICLE_ID a, PARTICLE_ID b);
         void        applyElectromagneticForce(PARTICLE_ID a, PARTICLE_ID b);
         void        tick();

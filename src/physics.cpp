@@ -142,6 +142,33 @@ PARTICLE_ID Physics::combineParticles(PARTICLE_ID a, PARTICLE_ID b){
     return a;
 }
 
+void Physics::bounceParticles(PARTICLE_ID a, PARTICLE_ID b){
+
+    if(!_ready){
+        fprintf(stderr, "physics: Err - not initialized\n");
+        return;
+    }
+    if(!_isActive[a] || !_isActive[b]){
+        fprintf(stderr, "physics: Err - combining inactive particles\n");
+        return;
+    }
+
+    double xVelA, xVelB, yVelA, yVelB;
+
+    xVelA = (_xVel[b] * (_mass[b] - _mass[a]) + (2 * _mass[b] * _xVel[b])) / (_mass[a] + _mass[b]);
+    xVelB = (_xVel[a] * (_mass[a] - _mass[b]) + (2 * _mass[a] * _xVel[a])) / (_mass[b] + _mass[a]);
+
+    yVelA = (_yVel[b] * (_mass[b] - _mass[a]) + (2 * _mass[b] * _yVel[b])) / (_mass[a] + _mass[b]);
+    yVelB = (_yVel[a] * (_mass[a] - _mass[b]) + (2 * _mass[a] * _yVel[a])) / (_mass[b] + _mass[a]);
+
+    _xVel[a] = xVelA;
+    _xVel[b] = xVelB;
+
+    _yVel[a] = yVelA;
+    _yVel[b] = yVelB;
+
+}
+
 void Physics::applyGravitationForce(PARTICLE_ID a, PARTICLE_ID b){
 
     double xDist = _xPos[a] - _xPos[b];
@@ -302,12 +329,6 @@ void Physics::collisions(unsigned behavior){
         return;
     }
 
-    if(behavior == COLLISION_BEHAVIOR_ELASTIC){
-        fprintf(stderr, "physics: Err - Elastic not yet implemented\n");
-        // TODO elastic
-        return;
-    }
-
     for(i = 0; i < _particleCount; ++i){
         for(j = i + 1; j < _particleCount; ++j){
             if(_isActive[i] && _isActive[j]){
@@ -316,7 +337,17 @@ void Physics::collisions(unsigned behavior){
                 dist += (_yPos[i] - _yPos[j]) * (_yPos[i] - _yPos[j]); // *b^2
                 dist = sqrt(dist); // = c^2
                 if(dist < (_size[i] + _size[j])){
-                    combineParticles(i, j);
+
+                    switch(behavior){
+
+                    case COLLISION_BEHAVIOR_ELASTIC:
+                        bounceParticles(i, j);
+                        break;
+
+                    case COLLISION_BEHAVIOR_INELASTIC:
+                        combineParticles(i, j);
+                        break;
+                    }
                 }
 
             }
