@@ -153,20 +153,80 @@ void Physics::bounceParticles(PARTICLE_ID a, PARTICLE_ID b){
         return;
     }
 
-    double xVelA, xVelB, yVelA, yVelB;
+    double deltaXPos = _xPos[a] - _xPos[b];
+    double deltaYPos = _yPos[a] - _yPos[b];
 
-    xVelA = (_xVel[b] * (_mass[b] - _mass[a]) + (2 * _mass[b] * _xVel[b])) / (_mass[a] + _mass[b]);
-    xVelB = (_xVel[a] * (_mass[a] - _mass[b]) + (2 * _mass[a] * _xVel[a])) / (_mass[b] + _mass[a]);
+    double phi = (deltaXPos == 0 ? PI / 2 : radToDeg(atan(deltaYPos / deltaXPos)));
 
-    yVelA = (_yVel[b] * (_mass[b] - _mass[a]) + (2 * _mass[b] * _yVel[b])) / (_mass[a] + _mass[b]);
-    yVelB = (_yVel[a] * (_mass[a] - _mass[b]) + (2 * _mass[a] * _yVel[a])) / (_mass[b] + _mass[a]);
+    double totalVelA = sqrt(pow(_xVel[a], 2) + pow(_yVel[a], 2));
+    double totalVelB = sqrt(pow(_xVel[b], 2) + pow(_yVel[b], 2));
 
-    _xVel[a] = xVelA;
-    _xVel[b] = xVelB;
+    //double thetaA = (_xVel[a] == 0 ? PI / 2 : tan(_yVel[a] / _xVel[a]));
+    //double thetaB = (_xVel[b] == 0 ? PI / 2 : tan(_yVel[b] / _xVel[b]));
 
-    _yVel[a] = yVelA;
-    _yVel[b] = yVelB;
+    double thetaA = findAngle(_xVel[a], _yVel[a]);
+    double thetaB = findAngle(_xVel[b], _yVel[b]);
 
+    thetaA += phi;
+    thetaB += phi;
+
+    double skimVelA = totalVelA * sin(degToRad(thetaA));
+    double skimVelB = totalVelB * sin(degToRad(thetaB));
+
+    double collisionVelA = totalVelA * cos(degToRad(thetaA));
+    double collisionVelB = totalVelB * cos(degToRad(thetaB));
+
+    double newCollisionVelA = (((_mass[a] - _mass[b]) * collisionVelA) + (2 * _mass[b] * collisionVelB)) / (_mass[a] + _mass[b]);
+    double newCollisionVelB = (((_mass[b] - _mass[a]) * collisionVelB) + (2 * _mass[a] * collisionVelA)) / (_mass[a] + _mass[b]);
+
+    totalVelA = sqrt(pow(skimVelA, 2) + pow(newCollisionVelA, 2));
+    totalVelB = sqrt(pow(skimVelB, 2) + pow(newCollisionVelB, 2));
+
+    //test
+    thetaA = findAngle(newCollisionVelA, skimVelA);
+    thetaB = findAngle(newCollisionVelB, skimVelB);
+
+    thetaA -= phi;
+    thetaB -= phi;
+
+    double newX = _xVel[a] = totalVelA * cos(degToRad(thetaA));
+    double newY = _yVel[a] = totalVelA * sin(degToRad(thetaA));
+
+    newX = _xVel[b] = totalVelB * cos(degToRad(thetaB));
+    newY = _yVel[b] = totalVelB * sin(degToRad(thetaB));
+
+}
+
+double Physics::findAngle(double xVal, double yVal){
+
+    if (xVal < 0){
+        return 180 + radToDeg(atan(yVal / xVal));
+    }
+    else if (xVal > 0 && yVal >= 0){
+        return radToDeg(atan(yVal / xVal));
+    }
+    else if (xVal > 0 && yVal < 0){
+        return 360 + radToDeg(atan(yVal / xVal));
+    }
+    else if (xVal == 0 && yVal == 0){
+        return 0;
+    }
+    else if (xVal == 0 && yVal >= 0){
+        return 90;
+    }
+    else{
+        return 270;
+    }
+
+}
+
+double Physics::radToDeg(double radians){
+    return radians * (180.0 / M_PI);
+}
+
+double Physics::degToRad(double degrees){
+    double deg = degrees * (M_PI / 180.0);
+    return deg;
 }
 
 void Physics::applyGravitationForce(PARTICLE_ID a, PARTICLE_ID b){

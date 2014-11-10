@@ -52,10 +52,14 @@ class Physics
         PARTICLE_ID getParticleAt(double x, double y);
 
     protected:
+        double      findAngle(double xVal, double yVal);
+        double      radToDeg(double radians);
+        double      degToRad(double degrees);
+
     private:
         double GRAVITATION = 6.77e-11L;
         double ELECTROSTATIC = 8.987e+9L;
-        double DENSITY = 10000;
+        double DENSITY = 1000;
         double _tickTime = 1;
         size_t  _particleCount;
         int*    _isActive;
