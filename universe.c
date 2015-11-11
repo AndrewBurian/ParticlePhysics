@@ -65,6 +65,7 @@ struct particle* getParticle(double xPos, double yPos) {
 
 void universeExpand(struct universe *univ) {
 
+	int i = 0;
 	int prev = univ->particleCount;
 
 	// double particle space
@@ -73,6 +74,28 @@ void universeExpand(struct universe *univ) {
 	univ->particles = realloc(univ->particles, univ->particleCount * sizeof(struct particle));
 
 	// zero out new particle space
-	memset(&univ->particles[prev], 0, (univ->particleCount - prev) * sizeof(struct particle));
+	for (i = prev; i < univ->particleCount; i++) {
+		univ->particles[i].isActive = 0;
+	}
 
+}
+
+struct universe* universeInit(int size) {
+
+	int i = 0;
+
+	struct universe *univ = malloc(sizeof(struct universe));
+	univ->paused = 1;
+	univ->scale = 0.1;
+	univ->speed = 1;
+	univ->particleCount = size;
+	univ->highestParticle = 0;
+
+	univ->particles = calloc(size, sizeof(struct particle));
+
+	for (i = 0; i < univ->particleCount; i++) {
+		univ->particles[i].isActive = 0;
+	}
+
+	return univ;
 }
