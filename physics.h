@@ -3,8 +3,8 @@
 
 #include "universe.h"
 
-const double GRAVITIATION = 6.77e-11L;
-const double ELECTROSTATIC = 8.987e+9L;
+#define GRAVITIATION 6.77e-11L
+#define ELECTROSTATIC 8.987e+9L
 
 void physicsApply(struct universe*);
 void applyGravity(struct universe*);

@@ -70,6 +70,36 @@ void applyForcePart(const double constant, struct particle* a, struct particle* 
 
 void applyMovement(struct universe* univ) {
 
+	int i = 0;
+	struct particle *p;
+
+	double xAccel, yAccel;
+
+	for(i = 0; i < univ->highestParticle; ++i){
+
+		p = &univ->particles[i];
+
+		if(!p->isActive || p->isStationary) {
+			continue;
+		}
+
+		// F = ma
+		// a = F / m
+		xAccel = (p->xForce / p->mass);
+		yAccel = (p->yForce / p->mass);
+
+		// update position
+		// x = v t + 0.5 a t^2
+		p->xPos += (p->xVel * univ->speed) + ( 0.5 * xAccel * (pow(univ->speed, 2)));
+		p->yPos += (p->yVel * univ->speed) + ( 0.5 * yAccel * (pow(univ->speed, 2)));
+
+		// update velocities
+		p->xVel += xAccel * univ->speed;
+		p->yVel += yAccel * univ->speed;
+
+		p->xForce = 0;
+		p->yForce = 0;
+	}
 }
 
 void applyCollision(struct universe* univ) {

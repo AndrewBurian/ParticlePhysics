@@ -24,6 +24,9 @@ struct particle {
 struct universe {
 	int paused;
 
+	double scale;	// m/px
+	double speed;	// s/tick
+
 	struct particle* particles;
 	int particleCount;
 	int highestParticle;
