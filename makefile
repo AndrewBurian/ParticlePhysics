@@ -17,5 +17,5 @@ physics.o: physics.c universe.h
 render.o: render.c universe.h
 	$(CC) $(CCFLAGS) render.c
 
-clean: 
+clean:
 	rm $(APPNAME) *.o
