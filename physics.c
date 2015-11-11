@@ -106,7 +106,6 @@ void applyMovement(struct universe* univ) {
 void applyCollision(struct universe* univ) {
 
 	int i, j = 0;
-	double distance;
 
 	for (i = 0; i < univ->highestParticle; i++) {
 		if (!univ->particles[i].isActive) {
@@ -145,8 +144,8 @@ int collideParticles(struct particle* a, struct particle* b) {
 	a->xPos = ((a->yPos * a->mass) + (b->yPos * b->mass)) / (a->mass + b->mass);
 
 	// conservation of momentum
-	a->xVel = ((a->xVel * a->mass) + (b->xVel, b->mass)) / (a->mass + b->mass);
-	a->yVel = ((a->yVel * a->mass) + (b->yVel, b->mass)) / (a->mass + b->mass);
+	a->xVel = ((a->xVel * a->mass) + (b->xVel * b->mass)) / (a->mass + b->mass);
+	a->yVel = ((a->yVel * a->mass) + (b->yVel * b->mass)) / (a->mass + b->mass);
 
 	// consertation of mass
 	a->mass += b->mass;

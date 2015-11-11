@@ -1,7 +1,7 @@
 APPNAME=particlesim
 LIBS=-lm -lSDL2
 LDFLAGS=-g
-CCFLAGS=-c
+CCFLAGS=-c -Werror -Wall
 
 all: $(APPNAME)
 
