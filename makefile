@@ -1,12 +1,15 @@
 APPNAME=particlesim
-LIBS=-lSDL2
+LIBS=-lm -lSDL2
 LDFLAGS=-g
 CCFLAGS=-c
 
 all: $(APPNAME)
 
-$(APPNAME): simulator.o physics.o render.o
-	$(CC) $(LDFLAGS) simulator.o physics.o render.o -o $(APPNAME) $(LIBS)
+$(APPNAME): universe.o simulator.o physics.o render.o
+	$(CC) $(LDFLAGS) universe.o simulator.o physics.o render.o -o $(APPNAME) $(LIBS)
+
+universe.o: universe.c universe.h
+	$(CC) $(CCFLAGS) universe.c
 
 simulator.o: simulator.c universe.h
 	$(CC) $(CCFLAGS) simulator.c

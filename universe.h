@@ -1,6 +1,8 @@
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
 
+#include <stdio.h>
+
 struct particle {
 	int isActive;
 	int isStationary;
@@ -21,6 +23,18 @@ struct particle {
 
 struct universe {
 	int paused;
+
+	struct particle* particles;
+	int particleCount;
+	int highestParticle;
+
 };
+
+struct universe* universeInit(int);
+struct universe* universeInitFromFile(FILE*);
+void universeExpand(struct universe*);
+void addParticle(struct universe*, struct particle*);
+void deleteParticle(struct universe*, struct particle*);
+struct particle* getParticle(double, double);
 
 #endif
