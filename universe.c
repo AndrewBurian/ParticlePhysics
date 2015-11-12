@@ -2,28 +2,29 @@
 #include <string.h>
 #include <stdlib.h>
 
-void addParticle(struct universe *univ, struct particle *p) {
+void addParticle(struct universe *univ, struct particle *p)
+{
 
 	int i = 0;
 
 	// continue looping until particle is added
-	while(1) {
+	while (1) {
 
 		// loop through the universe
 		for (i = 0; i < univ->particleCount; i++) {
 
 			// find an unused particle
-			if(!univ->particles[i].isActive) {
+			if (!univ->particles[i].isActive) {
 
 				// copy the particle into the universe
-				memcpy(&univ->particles[i], p, sizeof(struct particle));
+				memcpy(&univ->particles[i], p,
+				       sizeof(struct particle));
 				univ->particles[i].isActive = 1;
 
 				// adjust highest particle if needed
-				if(i > univ->highestParticle) {
+				if (i > univ->highestParticle) {
 					univ->highestParticle = i;
 				}
-
 				// particle added
 				break;
 			}
@@ -33,13 +34,13 @@ void addParticle(struct universe *univ, struct particle *p) {
 		if (i < univ->particleCount) {
 			break;
 		}
-
 		// otherwise expand the universe and try again
 		universeExpand(univ);
 	}
 }
 
-void deleteParticle(struct universe *univ, struct particle *p) {
+void deleteParticle(struct universe *univ, struct particle *p)
+{
 
 	int i = 0;
 
@@ -59,11 +60,13 @@ void deleteParticle(struct universe *univ, struct particle *p) {
 
 }
 
-struct particle* getParticle(double xPos, double yPos) {
+struct particle *getParticle(double xPos, double yPos)
+{
 	return 0;
 }
 
-void universeExpand(struct universe *univ) {
+void universeExpand(struct universe *univ)
+{
 
 	int i = 0;
 	int prev = univ->particleCount;
@@ -71,7 +74,9 @@ void universeExpand(struct universe *univ) {
 	// double particle space
 	univ->particleCount *= 2;
 
-	univ->particles = realloc(univ->particles, univ->particleCount * sizeof(struct particle));
+	univ->particles =
+	    realloc(univ->particles,
+		    univ->particleCount * sizeof(struct particle));
 
 	// zero out new particle space
 	for (i = prev; i < univ->particleCount; i++) {
@@ -80,7 +85,8 @@ void universeExpand(struct universe *univ) {
 
 }
 
-struct universe* universeInit(int size) {
+struct universe *universeInit(int size)
+{
 
 	int i = 0;
 
@@ -100,11 +106,13 @@ struct universe* universeInit(int size) {
 	return univ;
 }
 
-struct universe* universeInitFromFile(FILE *file) {
+struct universe *universeInitFromFile(FILE * file)
+{
 	return 0;
 }
 
-void freeUniverse(struct universe* univ) {
+void freeUniverse(struct universe *univ)
+{
 
 	free(univ->particles);
 	free(univ);

@@ -24,21 +24,21 @@ struct particle {
 struct universe {
 	int paused;
 
-	double scale;	// m/px
-	double speed;	// s/tick
+	double scale;		// m/px
+	double speed;		// s/tick
 
-	struct particle* particles;
+	struct particle *particles;
 	int particleCount;
 	int highestParticle;
 
 };
 
-struct universe* universeInit(int);
-struct universe* universeInitFromFile(FILE*);
-void universeExpand(struct universe*);
-void addParticle(struct universe*, struct particle*);
-void deleteParticle(struct universe*, struct particle*);
-struct particle* getParticle(double, double);
-void freeUniverse(struct universe*);
+struct universe *universeInit(int);
+struct universe *universeInitFromFile(FILE *);
+void universeExpand(struct universe *);
+void addParticle(struct universe *, struct particle *);
+void deleteParticle(struct universe *, struct particle *);
+struct particle *getParticle(double, double);
+void freeUniverse(struct universe *);
 
 #endif
