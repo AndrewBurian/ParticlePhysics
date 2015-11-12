@@ -100,6 +100,10 @@ struct universe* universeInit(int size) {
 	return univ;
 }
 
+struct universe* universeInitFromFile(FILE *file) {
+	return 0;
+}
+
 void freeUniverse(struct universe* univ) {
 
 	free(univ->particles);

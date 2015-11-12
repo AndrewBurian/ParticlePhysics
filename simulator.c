@@ -2,11 +2,72 @@
 #include "physics.h"
 #include "render.h"
 #include <SDL2/SDL.h>
+#include <getopt.h>
+#include <stdio.h>
 
-void simultateMode(struct universe*);
+void simulateMode(struct universe*);
 void addParticleMode(struct universe*);
 
 int main(int argc, char **argv) {
+
+	// args setup
+	char *shortOpts = "f:";
+	struct option longOpts[] = {
+		{"file",	required_argument,	0,	'f'},
+		{0,	0,	0,	0}
+	};
+	char c = 0;
+	int optionIndex = 0;
+
+	// file for loading universe
+	char *universeFilePath = 0;
+	FILE *universeFile = 0;
+
+	// universe
+	struct universe *univ = 0;
+
+	// process arguments
+	while ((c = getopt_long(argc, argv, shortOpts, longOpts, &optionIndex)) != -1) {
+		switch(c) {
+
+		case 'f':
+			universeFilePath = optarg;
+			break;
+
+		default:
+			return -1;
+
+		}
+	}
+
+	// attempt to open file
+	if (universeFilePath) {
+		universeFile = fopen(universeFilePath, "r");
+		if (!universeFile) {
+			fprintf(stderr, "Failed to open file %s\n", universeFilePath);
+			return -2;
+		}
+	}
+
+	// load universe
+	if (universeFile) {
+		univ = universeInitFromFile(universeFile);
+		fclose(universeFile);
+	} else {
+		univ = universeInit(10);
+	}
+
+	if (!univ) {
+		fprintf(stderr, "Failed to initialize universe\n");
+		return -3;
+	}
+
+	// run simulation
+	simulateMode(univ);
+
+	// finished
+	freeUniverse(univ);
+
 	return 0;
 }
 
@@ -39,7 +100,7 @@ void simulateMode(struct universe *univ) {
 }
 
 void addParticleMode(struct universe *univ) {
-	
+
 	int addDone = 0;
 	SDL_Event ev;
 
