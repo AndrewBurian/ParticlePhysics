@@ -99,3 +99,10 @@ struct universe* universeInit(int size) {
 
 	return univ;
 }
+
+void freeUniverse(struct universe* univ) {
+
+	free(univ->particles);
+	free(univ);
+
+}
