@@ -5,8 +5,11 @@ CCFLAGS=-c -Werror -Wall
 
 all: $(APPNAME)
 
-$(APPNAME): universe.o simulator.o physics.o render.o
-	$(CC) $(LDFLAGS) universe.o simulator.o physics.o render.o -o $(APPNAME) $(LIBS)
+$(APPNAME): universe.o simulator.o physics.o render.o input.o
+	$(CC) $(LDFLAGS) universe.o simulator.o physics.o render.o input.o -o $(APPNAME) $(LIBS)
+
+run: $(APPNAME)
+	./$(APPNAME)
 
 universe.o: universe.c universe.h
 	$(CC) $(CCFLAGS) universe.c
@@ -19,6 +22,9 @@ physics.o: physics.c universe.h
 
 render.o: render.c universe.h
 	$(CC) $(CCFLAGS) render.c
+
+input.o: input.c simulator.h
+	$(CC) $(CCFLAGS) input.c
 
 clean:
 	rm $(APPNAME) *.o

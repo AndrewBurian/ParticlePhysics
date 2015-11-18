@@ -1,11 +1,13 @@
 #include "universe.h"
 #include "physics.h"
 #include "render.h"
+#include "simulator.h"
+#include "input.h"
 #include <SDL2/SDL.h>
 #include <getopt.h>
 #include <stdio.h>
 
-void simulateMode(struct universe *);
+void simulateMode(struct renderstate *, struct universe *, struct simulation *);
 void addParticleMode(struct universe *);
 
 int main(int argc, char **argv)
@@ -24,8 +26,10 @@ int main(int argc, char **argv)
 	char *universeFilePath = 0;
 	FILE *universeFile = 0;
 
-	// universe
+	// state information
 	struct universe *univ = 0;
+	struct renderstate *render = 0;
+	struct simulation *sim = 0;
 
 	// process arguments
 	while ((c =
@@ -64,8 +68,34 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Failed to initialize universe\n");
 		return -3;
 	}
+	// create the renderstate
+	render = renderCreate("Particle Simulator", 640, 480);
+	if (render == 0) {
+		fprintf(stderr, "Failed to initialize the renderer\n");
+		return -4;
+	}
+	// Create the simulation state
+	sim = (struct simulation *)malloc(sizeof(struct simulation));
+
+	struct particle p = { 0 };
+	p.isActive = 1;
+	p.isStationary = 0;
+	p.xPos = 10;
+	p.yPos = 10;
+	p.xVel = 10;
+	p.mass = 10;
+	p.charge = 1;
+	p.size = 10;
+
+	addParticle(univ, &p);
+
+	p.xPos = 100;
+	p.size = 20;
+
+	addParticle(univ, &p);
+
 	// run simulation
-	simulateMode(univ);
+	simulateMode(render, univ, sim);
 
 	// finished
 	freeUniverse(univ);
@@ -73,30 +103,18 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void simulateMode(struct universe *univ)
+void simulateMode(struct renderstate *render, struct universe *univ,
+		  struct simulation *sim)
 {
 
-	int running = 1;
-	SDL_Event ev;
-
 	// main process loop
-	while (running) {
+	while (sim->running) {
 
-		// loop through events
-		while (SDL_PollEvent(&ev)) {
-
-			switch (ev.type) {
-
-			case SDL_MOUSEBUTTONDOWN:
-				addParticleMode(univ);
-				break;
-
-			}
-		}
+		handleInput(sim, univ);
 
 		physicsApply(univ);
 
-		renderUniverse(univ);
+		renderUniverse(render, univ);
 
 	}
 
