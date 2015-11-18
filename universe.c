@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 void addParticle(struct universe *univ, struct particle *p)
 {
@@ -168,7 +169,7 @@ struct universe *universeInitFromFile(FILE * file)
 	// read particles
 	while (readFileLine(line, &lineSize, file) != -1) {
 		if (sscanf
-		    (line, "%d %d %lf %lf %lf %lf %lf %lf %lf", &p.isActive,
+		    (line, "%d %lf %lf %lf %lf %lf %lf %lf",
 		     &p.isStationary, &p.xPos, &p.yPos, &p.xVel, &p.yVel,
 		     &p.mass, &p.charge, &p.size) == 9) {
 			addParticle(univ, &p);
@@ -180,7 +181,31 @@ struct universe *universeInitFromFile(FILE * file)
 
 void saveToFile(struct universe *univ)
 {
+	char fileName[20] = { 0 };
+	FILE *file = 0;
+	int fileCount, i;
+	struct particle *p;
 
+	for (fileCount = 1; fileCount < 999; i++) {
+		sprintf(fileName, "universe-%d.save", fileCount);
+		if (access(fileName, F_OK) == -1) {
+			// file does not exist
+			break;
+		}
+	}
+
+	file = fopen(fileName, "w");
+
+	fprintf(file, "%lf\n%lf\n", univ->scale, univ->speed);
+
+	for (i = 0; i < univ->highestParticle; i++) {
+		if (univ->particles[i].isActive) {
+			p = &univ->particles[i];
+			fprintf(file, "%d %lf %lf %lf %lf %lf %lf %lf",
+				p->isStationary, p->xPos, p->yPos, p->xVel,
+				p->yVel, p->mass, p->charge, p->size);
+		}
+	}
 }
 
 void freeUniverse(struct universe *univ)
