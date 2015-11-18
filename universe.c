@@ -1,6 +1,8 @@
 #include "universe.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 
 void addParticle(struct universe *univ, struct particle *p)
 {
@@ -105,9 +107,104 @@ struct universe *universeInit(int size)
 	return univ;
 }
 
+int readFileLine(char *line, size_t * n, FILE * file)
+{
+	int count = 0;
+	int i = 0;
+
+	while (1) {
+		count = getline(&line, n, file);
+
+		if (count == -1) {
+			return count;
+		}
+
+		if (count == 0) {
+			continue;
+		}
+
+		for (i = 0; i < count; i++) {
+			if (line[i] == '#') {
+				line[i] = 0;
+				break;
+			}
+		}
+
+		if (i >= 1) {
+			return i;
+		}
+	}
+}
+
 struct universe *universeInitFromFile(FILE * file)
 {
-	return 0;
+	struct universe *univ = malloc(sizeof(struct universe));
+	char *line = 0;
+	size_t lineSize = 0;
+
+	struct particle p = { 0 };
+
+	// read universe scale
+	if (readFileLine(line, &lineSize, file) == -1) {
+		free(univ);
+		return 0;
+
+	}
+
+	if (sscanf(line, "%lf", &univ->scale) != 1) {
+		free(univ);
+		return 0;
+	}
+	// read universe speed
+	if (readFileLine(line, &lineSize, file) == -1) {
+		free(univ);
+		return 0;
+	}
+
+	if (sscanf(line, "%lf", &univ->speed) != 1) {
+		free(univ);
+		return 0;
+	}
+	// read particles
+	while (readFileLine(line, &lineSize, file) != -1) {
+		if (sscanf
+		    (line, "%d %lf %lf %lf %lf %lf %lf %lf",
+		     &p.isStationary, &p.xPos, &p.yPos, &p.xVel, &p.yVel,
+		     &p.mass, &p.charge, &p.size) == 9) {
+			addParticle(univ, &p);
+		}
+	}
+
+	return univ;
+}
+
+void saveToFile(struct universe *univ)
+{
+	char fileName[20] = { 0 };
+	FILE *file = 0;
+	int fileCount, i;
+	struct particle *p;
+
+	for (fileCount = 1; fileCount < 999; i++) {
+		sprintf(fileName, "universe-%d.save", fileCount);
+		if (access(fileName, F_OK) == -1) {
+			// file does not exist
+			break;
+		}
+	}
+
+	file = fopen(fileName, "w");
+
+	fprintf(file, "%lf\n%lf\n", univ->scale, univ->speed);
+
+	for (i = 0; i < univ->highestParticle; i++) {
+		if (univ->particles[i].isActive) {
+			p = &univ->particles[i];
+			fprintf(file, "%d %lf %lf %lf %lf %lf %lf %lf",
+				p->isStationary, p->xPos, p->yPos, p->xVel,
+				p->yVel, p->mass, p->charge, p->size);
+		}
+	}
 }
 
 void freeUniverse(struct universe *univ)
