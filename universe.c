@@ -25,7 +25,7 @@ int addParticle(struct universe *univ, struct particle *p)
 				univ->particles[i].isActive = 1;
 
 				// adjust highest particle if needed
-				if (i == univ->nextParticle) {
+				if (i >= univ->nextParticle) {
 					univ->nextParticle = i + 1;
 				}
 				// particle added
@@ -60,7 +60,7 @@ void deleteParticle(struct universe *univ, struct particle *p)
 		}
 	}
 
-	univ->nextParticle = i;
+	univ->nextParticle = i + 1;
 
 }
 
