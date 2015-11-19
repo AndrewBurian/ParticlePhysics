@@ -25,6 +25,11 @@ struct simulation {
 
 	int state;
 
+	struct particle *hotParticle;
+	uint last_click;
+	int last_click_x;
+	int last_click_y;
+
 };
 
 #endif

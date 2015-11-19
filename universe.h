@@ -22,7 +22,6 @@ struct particle {
 };
 
 struct universe {
-	double scale;		// m/px
 	double speed;		// s/tick
 
 	struct particle *particles;
