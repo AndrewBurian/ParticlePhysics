@@ -8,10 +8,14 @@ int collideParticles(struct particle *, struct particle *);
 
 void physicsApply(struct universe *univ)
 {
-	applyGravity(univ);
-	applyElectric(univ);
-	applyMovement(univ);
-	applyCollision(univ);
+	int i;
+
+	for (i = 0; i < univ->fidelity; i++) {
+		applyGravity(univ);
+		applyElectric(univ);
+		applyMovement(univ);
+		applyCollision(univ);
+	}
 }
 
 void applyGravity(struct universe *univ)
@@ -102,6 +106,7 @@ void applyMovement(struct universe *univ)
 	struct particle *p;
 
 	double xAccel, yAccel;
+	double tickSpeed = univ->speed / univ->fidelity;
 
 	for (i = 0; i < univ->nextParticle; ++i) {
 
@@ -118,15 +123,15 @@ void applyMovement(struct universe *univ)
 		// update position
 		// x = v t + 0.5 a t^2
 		p->xPos +=
-		    (p->xVel * univ->speed) +
-		    (0.5 * xAccel * (pow(univ->speed, 2)));
+		    (p->xVel * tickSpeed) +
+		    (0.5 * xAccel * (pow(tickSpeed, 2)));
 		p->yPos +=
-		    (p->yVel * univ->speed) +
-		    (0.5 * yAccel * (pow(univ->speed, 2)));
+		    (p->yVel * tickSpeed) +
+		    (0.5 * yAccel * (pow(tickSpeed, 2)));
 
 		// update velocities
-		p->xVel += xAccel * univ->speed;
-		p->yVel += yAccel * univ->speed;
+		p->xVel += xAccel * tickSpeed;
+		p->yVel += yAccel * tickSpeed;
 
 		p->xForce = 0;
 		p->yForce = 0;
@@ -175,7 +180,7 @@ int collideParticles(struct particle *a, struct particle *b)
 	// mass-weighted new position
 	a->xPos =
 	    ((a->xPos * a->mass) + (b->xPos * b->mass)) / (a->mass + b->mass);
-	a->xPos =
+	a->yPos =
 	    ((a->yPos * a->mass) + (b->yPos * b->mass)) / (a->mass + b->mass);
 
 	// conservation of momentum

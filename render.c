@@ -77,10 +77,10 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		    (render->height / 2);
 
 		rect.w =
-		    (int)(univ->particles[i].size * render->scale *
+		    (int)(univ->particles[i].size * 2 * render->scale *
 			  univ->scale);
 		rect.h =
-		    (int)(univ->particles[i].size * render->scale *
+		    (int)(univ->particles[i].size * 2 * render->scale *
 			  univ->scale);
 		rect.x = x - (rect.w / 2);
 		rect.y = y - (rect.h / 2);
@@ -181,7 +181,7 @@ void renderHotParticle(struct renderstate *render, struct simulation *sim,
 	double y =
 	    ((p.yPos + render->yPos) * render->scale) + (render->height / 2);
 
-	double size = p.size * render->scale;
+	double size = p.size * 2 * render->scale * univ->scale;
 
 	// Draw X on the hot particle
 	SDL_SetRenderDrawColor(render->renderer, 0, 0, 0, 255);
@@ -201,17 +201,17 @@ void renderHotParticle(struct renderstate *render, struct simulation *sim,
 		   y + (p.yVel * scale), FONT_LEFT, text_unselected);
 
 	// Draw the options and current one.
-	renderText(render, render->font_large, "Velocity", x, y + size,
-		   FONT_LEFT,
+	renderText(render, render->font_large, "Velocity", x,
+		   y + (size / 2) + 10, FONT_LEFT,
 		   sim->hotParticleState ==
 		   HOTPARTICLE_VELOCITY ? text_selected : text_unselected);
 	sprintf(text, "Mass: %.2fkg", p.mass);
-	renderText(render, render->font_large, text, x, y + size + 15,
+	renderText(render, render->font_large, text, x, y + (size / 2) + 25,
 		   FONT_LEFT,
 		   sim->hotParticleState ==
 		   HOTPARTICLE_MASS ? text_selected : text_unselected);
 	sprintf(text, "Charge: %.2fC", p.charge);
-	renderText(render, render->font_large, text, x, y + size + 30,
+	renderText(render, render->font_large, text, x, y + (size / 2) + 40,
 		   FONT_LEFT,
 		   sim->hotParticleState ==
 		   HOTPARTICLE_CHARGE ? text_selected : text_unselected);
