@@ -7,9 +7,13 @@
 
 struct renderstate {
 
-	SDL_Window *window;
-	SDL_Renderer *renderer;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
 
+    float scale;
+    int xPos;
+    int yPos;
+    
 };
 
 struct renderstate *renderCreate(const char *title, int width, int height);

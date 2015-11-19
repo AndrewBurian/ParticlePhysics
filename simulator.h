@@ -11,11 +11,20 @@
 #if !defined(SIMULATOR_H)
 #define SIMULATOR_H
 
+enum {
+    SIMULATION_NORMAL = 0x0,
+    SIMULATION_PAN = 0x1,
+    SIMULATION_ADDPARTICLE = 0x2,
+    SIMULATION_UPDATEPARTICLE = 0x3,
+};
+
 struct simulation {
 
-	int running;
-	int paused;
+    int running;
+    int paused;
 
+    int state;
+    
 };
 
 #endif

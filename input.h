@@ -11,9 +11,10 @@
 #if !defined(INPUT_H)
 #define INPUT_H
 
+#include "render.h"
 #include "simulator.h"
 #include "universe.h"
 
-void handleInput(struct simulation *, struct universe *);
+void handleInput(struct simulation *, struct universe *, struct renderstate *);
 
 #endif
