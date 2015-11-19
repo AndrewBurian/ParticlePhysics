@@ -80,10 +80,17 @@ void renderUniverse(struct renderstate *render, struct universe *univ)
 		rect.w = (int)(univ->particles[i].size * render->scale);
 		rect.h = (int)(univ->particles[i].size * render->scale);
 
+		if (rect.w == 0) {
+			rect.w = 1;
+		}
+		if (rect.h == 0) {
+			rect.h = 1;
+		}
+
 		SDL_RenderFillRect(render->renderer, &rect);
 	}
 
-	renderHUD(render, univ);
+	// renderHUD(render, univ);
 
 	SDL_RenderPresent(render->renderer);
 

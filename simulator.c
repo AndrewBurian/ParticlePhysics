@@ -82,17 +82,17 @@ int main(int argc, char **argv)
 	p.isStationary = 0;
 	p.xPos = -5;
 	p.yPos = -5;
-	p.xVel = 00;
+	p.xVel = 0;
 	p.mass = 10;
 	p.charge = 0;
 	p.size = 10;
 
 	addParticle(univ, &p);
 
-	// p.xPos = 620;
-	// p.size = 10;
+	p.xPos = 620;
+	p.size = 10;
 
-	// addParticle(univ, &p);
+	addParticle(univ, &p);
 
 	// run simulation
 	simulateMode(render, univ, sim);
@@ -131,29 +131,4 @@ struct simulation *simulationInit()
 	sim->state = SIMULATION_NORMAL;
 
 	return sim;
-}
-
-void addParticleMode(struct universe *univ)
-{
-
-	int addDone = 0;
-	SDL_Event ev;
-
-	// add process loop
-	while (!addDone) {
-
-		// loop through events
-		while (SDL_PollEvent(&ev)) {
-
-			switch (ev.type) {
-
-			case SDL_MOUSEBUTTONDOWN:
-				addParticleMode(univ);
-				break;
-
-			}
-		}
-
-		// render things somehow
-	}
 }

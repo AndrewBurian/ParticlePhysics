@@ -51,34 +51,37 @@ void handleInput(struct simulation *sim, struct universe *univ,
 
 		case SDL_MOUSEBUTTONUP:
 
-			if (sim->state != SIMULATION_ADDPARTICLE) {
+			if (event.button.button ==
+			    SDL_BUTTON_LEFT
+			    && sim->state != SIMULATION_ADDPARTICLE) {
 
-				if (event.button.timestamp - sim->last_click <
-				    100 && sim->last_click_x == event.button.x
+				if (sim->last_click_x == event.button.x
 				    && sim->last_click_y == event.button.y) {
 					struct particle p;
 
 					p.isActive = 1;
 					p.isStationary = 0;
 					p.xPos =
-					    render->xPos + event.button.x -
-					    (render->width / 2);
+					    ((event.button.x -
+					      (render->width / 2)) /
+					     render->scale) - render->xPos;
 					p.yPos =
-					    render->yPos + event.button.y -
-					    (render->height / 2);
+					    ((event.button.y -
+					      (render->height / 2)) /
+					     render->scale) - render->yPos;
 					p.xVel = 0;
 					p.yVel = 0;
 					p.xForce = 0;
 					p.yForce = 0;
-					p.mass = 10 * render->scale;
+					p.mass = 10 * (1 / render->scale);
 					p.charge = 0;
-					p.size = 10 * render->scale;
+					p.size = 10 * (1 / render->scale);
 
 					addParticle(univ, &p);
 
-					sim->state = SIMULATION_ADDPARTICLE;
-				} else if (event.button.button ==
-					   SDL_BUTTON_LEFT) {
+					// sim->state = SIMULATION_ADDPARTICLE;
+					sim->state = SIMULATION_NORMAL;
+				} else {
 					sim->state = SIMULATION_NORMAL;
 				}
 			}

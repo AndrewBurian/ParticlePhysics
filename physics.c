@@ -2,8 +2,8 @@
 #include "universe.h"
 #include <math.h>
 
-void applyForcePart(const double constant, struct particle *,
-		    struct particle *);
+void applyGravityPart(struct particle *, struct particle *);
+void applyElectricPart(struct particle *, struct particle *);
 int collideParticles(struct particle *, struct particle *);
 
 void physicsApply(struct universe *univ)
@@ -18,18 +18,18 @@ void applyGravity(struct universe *univ)
 {
 	int i, j = 0;
 
-	for (i = 0; i < univ->highestParticle; i++) {
+	for (i = 0; i < univ->nextParticle; i++) {
 		if (!univ->particles[i].isActive) {
 			continue;
 		}
 
-		for (j = i; j < univ->highestParticle; j++) {
+		for (j = i + 1; j < univ->nextParticle; j++) {
 			if (!univ->particles[j].isActive) {
 				continue;
 			}
 
-			applyForcePart(GRAVITIATION, &univ->particles[i],
-				       &univ->particles[j]);
+			applyGravityPart(&univ->particles[i],
+					 &univ->particles[j]);
 
 		}
 
@@ -41,33 +41,51 @@ void applyElectric(struct universe *univ)
 
 	int i, j = 0;
 
-	for (i = 0; i < univ->highestParticle; i++) {
+	for (i = 0; i < univ->nextParticle; i++) {
 		if (!univ->particles[i].isActive) {
 			continue;
 		}
 
-		for (j = i; j < univ->highestParticle; j++) {
+		for (j = i + 1; j < univ->nextParticle; j++) {
 			if (!univ->particles[j].isActive) {
 				continue;
 			}
 
-			applyForcePart(ELECTROSTATIC, &univ->particles[i],
-				       &univ->particles[j]);
+			applyElectricPart(&univ->particles[i],
+					  &univ->particles[j]);
 
 		}
 
 	}
 }
 
-void applyForcePart(const double constant, struct particle *a,
-		    struct particle *b)
+void applyGravityPart(struct particle *a, struct particle *b)
 {
 
 	double xDist = a->xPos - b->xPos;
 	double yDist = a->yPos - b->yPos;
 	double distance = sqrt(pow(xDist, 2) + pow(yDist, 2));
 
-	double totalForce = constant * ((a->mass * b->mass) / pow(distance, 2));
+	double totalForce =
+	    GRAVITIATION * ((a->mass * b->mass) / pow(distance, 2));
+
+	a->xForce -= totalForce * xDist / distance;
+	a->yForce -= totalForce * yDist / distance;
+
+	b->xForce += totalForce * xDist / distance;
+	b->yForce += totalForce * yDist / distance;
+
+}
+
+void applyElectricPart(struct particle *a, struct particle *b)
+{
+
+	double xDist = a->xPos - b->xPos;
+	double yDist = a->yPos - b->yPos;
+	double distance = sqrt(pow(xDist, 2) + pow(yDist, 2));
+
+	double totalForce =
+	    ELECTROSTATIC * ((a->charge * b->charge) / pow(distance, 2));
 
 	a->xForce -= totalForce * xDist / distance;
 	a->yForce -= totalForce * yDist / distance;
@@ -85,7 +103,7 @@ void applyMovement(struct universe *univ)
 
 	double xAccel, yAccel;
 
-	for (i = 0; i < univ->highestParticle; ++i) {
+	for (i = 0; i < univ->nextParticle; ++i) {
 
 		p = &univ->particles[i];
 
@@ -120,12 +138,12 @@ void applyCollision(struct universe *univ)
 
 	int i, j = 0;
 
-	for (i = 0; i < univ->highestParticle; i++) {
+	for (i = 0; i < univ->nextParticle; i++) {
 		if (!univ->particles[i].isActive) {
 			continue;
 		}
 
-		for (j = i; j < univ->highestParticle; j++) {
+		for (j = i + 1; j < univ->nextParticle; j++) {
 			if (!univ->particles[j].isActive) {
 				continue;
 			}
@@ -173,7 +191,12 @@ int collideParticles(struct particle *a, struct particle *b)
 	a->isStationary += b->isStationary;
 
 	// size is a function of density and mass
-	a->size = sqrt(a->mass / DENSITY / M_PI);
+	setParticleSize(a);
 
 	return 1;
+}
+
+void setParticleSize(struct particle *p)
+{
+	p->size = sqrt(p->mass / DENSITY / M_PI);
 }

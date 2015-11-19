@@ -27,4 +27,14 @@
 *.out
 *.app
 
+# Jordans editor
 emacs.sh
+
+# Program files
+particlesim
+*.save
+*~
+
+# Editor files
+*.swp
+*.sh

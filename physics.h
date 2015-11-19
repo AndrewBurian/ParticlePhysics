@@ -12,5 +12,6 @@ void applyGravity(struct universe *);
 void applyElectric(struct universe *);
 void applyMovement(struct universe *);
 void applyCollision(struct universe *);
+void setParticleSize(struct particle *);
 
 #endif
