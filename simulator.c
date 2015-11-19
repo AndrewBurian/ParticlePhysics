@@ -114,9 +114,11 @@ void simulateMode(struct renderstate *render, struct universe *univ,
 
 		handleInput(sim, univ, render);
 
-		physicsApply(univ);
+		if (sim->paused == 0) {
+			physicsApply(univ);
+		}
 
-		renderUniverse(render, univ);
+		renderUniverse(render, sim, univ);
 
 	}
 }
@@ -128,7 +130,12 @@ struct simulation *simulationInit()
 
 	sim->running = 0;
 	sim->paused = 0;
+
 	sim->state = SIMULATION_NORMAL;
+
+	sim->hotParticle = -1;
+	sim->last_click_x = -1;
+	sim->last_click_y = -1;
 
 	return sim;
 }

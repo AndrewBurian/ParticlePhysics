@@ -32,7 +32,7 @@ struct universe {
 struct universe *universeInit(int);
 struct universe *universeInitFromFile(FILE *);
 void universeExpand(struct universe *);
-void addParticle(struct universe *, struct particle *);
+int addParticle(struct universe *, struct particle *);
 void deleteParticle(struct universe *, struct particle *);
 struct particle *getParticle(struct universe *, double, double);
 void saveToFile(struct universe *);

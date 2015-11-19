@@ -13,6 +13,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "physics.h"
 #include "render.h"
 #include "simulator.h"
 #include "universe.h"
@@ -33,56 +34,94 @@ void handleInput(struct simulation *sim, struct universe *univ,
 		case SDL_KEYDOWN:
 			if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 				sim->running = 0;
+			} else if (event.key.keysym.scancode ==
+				   SDL_SCANCODE_SPACE) {
+				if (sim->paused) {
+					sim->state = SIMULATION_NORMAL;
+					sim->hotParticle = -1;
+					sim->paused = 0;
+				} else {
+					sim->paused = 1;
+				}
 			}
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
 
-			sim->last_click = event.button.timestamp;
 			sim->last_click_x = event.button.x;
 			sim->last_click_y = event.button.y;
 
-			if (sim->state == SIMULATION_NORMAL
-			    && event.button.button == SDL_BUTTON_LEFT) {
-				sim->state = SIMULATION_PAN;
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				if (sim->state == SIMULATION_NORMAL) {
+					sim->state = SIMULATION_PAN;
+				} else if (sim->state ==
+					   SIMULATION_UPDATEPARTICLE) {
+					if (sim->hotParticleState ==
+					    HOTPARTICLE_VELOCITY) {
+						sim->state =
+						    SIMULATION_UPDATEPARTICLE_VELOCITY;
+					}
+				}
+			} else if (event.button.button == SDL_BUTTON_RIGHT) {
+				if (sim->state & SIMULATION_UPDATEPARTICLE) {
+					sim->hotParticleState++;
+					if (sim->hotParticleState >=
+					    HOTPARTICLE_COUNT) {
+						sim->hotParticleState = 0;
+					}
+				}
 			}
 
 			break;
 
 		case SDL_MOUSEBUTTONUP:
 
-			if (event.button.button ==
-			    SDL_BUTTON_LEFT
-			    && sim->state != SIMULATION_ADDPARTICLE) {
+			if (event.button.button == SDL_BUTTON_LEFT) {
 
-				if (sim->last_click_x == event.button.x
-				    && sim->last_click_y == event.button.y) {
-					struct particle p;
-
-					p.isActive = 1;
-					p.isStationary = 0;
-					p.xPos =
-					    ((event.button.x -
-					      (render->width / 2)) /
-					     render->scale) - render->xPos;
-					p.yPos =
-					    ((event.button.y -
-					      (render->height / 2)) /
-					     render->scale) - render->yPos;
-					p.xVel = 0;
-					p.yVel = 0;
-					p.xForce = 0;
-					p.yForce = 0;
-					p.mass = 10 * (1 / render->scale);
-					p.charge = 0;
-					p.size = 10 * (1 / render->scale);
-
-					addParticle(univ, &p);
-
-					// sim->state = SIMULATION_ADDPARTICLE;
-					sim->state = SIMULATION_NORMAL;
+				if (sim->state ==
+				    SIMULATION_UPDATEPARTICLE_VELOCITY) {
+					sim->state = SIMULATION_UPDATEPARTICLE;
 				} else {
-					sim->state = SIMULATION_NORMAL;
+					if (sim->last_click_x == event.button.x
+					    && sim->last_click_y ==
+					    event.button.y) {
+						struct particle p;
+
+						p.isActive = 1;
+						p.isStationary = 0;
+						p.xPos =
+						    ((event.button.x -
+						      (render->width / 2)) /
+						     render->scale) -
+						    render->xPos;
+						p.yPos =
+						    ((event.button.y -
+						      (render->height / 2)) /
+						     render->scale) -
+						    render->yPos;
+						p.xVel = 0;
+						p.yVel = 0;
+						p.xForce = 0;
+						p.yForce = 0;
+						p.mass =
+						    1000000 * (1 /
+							       render->scale);
+						p.charge = 0;
+
+						setParticleSize(&p);
+
+						sim->hotParticle =
+						    addParticle(univ, &p);
+						sim->hotParticleState =
+						    HOTPARTICLE_VELOCITY;
+
+						sim->state =
+						    SIMULATION_UPDATEPARTICLE;
+						sim->paused = 1;
+
+					} else {
+						sim->state = SIMULATION_NORMAL;
+					}
 				}
 			}
 
@@ -97,16 +136,60 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				render->yPos +=
 				    event.motion.yrel / render->scale;
 
+			} else if (sim->state ==
+				   SIMULATION_UPDATEPARTICLE_VELOCITY) {
+
+				struct particle *p =
+				    &univ->particles[sim->hotParticle];
+
+				double x =
+				    ((p->xPos + render->xPos) * render->scale) +
+				    (render->width / 2);
+				double y =
+				    ((p->yPos + render->yPos) * render->scale) +
+				    (render->height / 2);
+
+				double xDist = event.motion.x - x;
+				double yDist = event.motion.y - y;
+
+				p->xVel = xDist / 10;
+				p->yVel = yDist / 10;
 			}
 
 			break;
 
 		case SDL_MOUSEWHEEL:
 
-			if (event.wheel.x + event.wheel.y < 0) {
-				render->scale /= 1.1;
+			if (sim->state == SIMULATION_UPDATEPARTICLE) {
+				if (sim->hotParticleState == HOTPARTICLE_MASS) {
+					struct particle *p =
+					    &univ->particles[sim->hotParticle];
+
+					if (event.wheel.x + event.wheel.y < 0) {
+						p->mass /= 1.1;
+					} else {
+						p->mass *= 1.1;
+					}
+
+					setParticleSize(p);
+				} else if (sim->hotParticleState ==
+					   HOTPARTICLE_CHARGE) {
+					struct particle *p =
+					    &univ->particles[sim->hotParticle];
+
+					if (event.wheel.x + event.wheel.y < 0) {
+						p->charge -= 0.1;
+					} else {
+						p->charge += 0.1;
+					}
+
+				}
 			} else {
-				render->scale *= 1.1;
+				if (event.wheel.x + event.wheel.y < 0) {
+					render->scale /= 1.1;
+				} else {
+					render->scale *= 1.1;
+				}
 			}
 
 			break;

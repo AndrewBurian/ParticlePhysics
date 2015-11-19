@@ -14,8 +14,15 @@
 enum {
 	SIMULATION_NORMAL = 0x0,
 	SIMULATION_PAN = 0x1,
-	SIMULATION_ADDPARTICLE = 0x2,
-	SIMULATION_UPDATEPARTICLE = 0x3,
+	SIMULATION_UPDATEPARTICLE = 0x2,
+	SIMULATION_UPDATEPARTICLE_VELOCITY = 0x3,
+};
+enum {
+	HOTPARTICLE_VELOCITY = 0x0,
+	HOTPARTICLE_MASS = 0x1,
+	HOTPARTICLE_CHARGE = 0x2,
+
+	HOTPARTICLE_COUNT,
 };
 
 struct simulation {
@@ -24,11 +31,11 @@ struct simulation {
 	int paused;
 
 	int state;
-
-	struct particle *hotParticle;
-	uint last_click;
 	int last_click_x;
 	int last_click_y;
+
+	int hotParticle;
+	int hotParticleState;
 
 };
 

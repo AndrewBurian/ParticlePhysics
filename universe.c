@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <math.h>
 
-void addParticle(struct universe *univ, struct particle *p)
+int addParticle(struct universe *univ, struct particle *p)
 {
 
 	int i = 0;
@@ -40,6 +40,7 @@ void addParticle(struct universe *univ, struct particle *p)
 		// otherwise expand the universe and try again
 		universeExpand(univ);
 	}
+	return i;
 }
 
 void deleteParticle(struct universe *univ, struct particle *p)
