@@ -26,13 +26,14 @@ struct renderstate *renderCreate(const char *title, int width, int height)
     state->scale = 1.0f;
     state->xPos = 0;
     state->yPos = 0;
-    
+    state->width = width;
+    state->height = height;
+
     return state;
 }
 
 void renderUniverse(struct renderstate *state, struct universe *univ)
 {
-
     SDL_Rect rect;
     int i;
 
@@ -41,24 +42,33 @@ void renderUniverse(struct renderstate *state, struct universe *univ)
 
     SDL_SetRenderDrawColor(state->renderer, 255, 0, 0, 255);
 
+    int centerX = state->width / 2;
+    int centerY = state->height / 2;
+
     for (i = 0; i < univ->particleCount; i++) {
 
         if (!univ->particles[i].isActive) {
             continue;
         }
 
-        double x = ((int)univ->particles[i].xPos * state->scale) + state->xPos;
-        double y = ((int)univ->particles[i].yPos * state->scale) + state->yPos;
+        // The position + the screen offset
+        double x = (univ->particles[i].xPos + state->xPos);
+        double y = (univ->particles[i].yPos + state->yPos);
 
-        // rect.x = (int)univ->particles[i].xPos + state->xPos;
-        // rect.y = (int)univ->particles[i].yPos + state->yPos;
+        // Scale the position
+        x *= state->scale;
+        y *= state->scale;
+
+        // Move the particles to the middle of the screen.
+        x += centerX;
+        y += centerY;
+
         rect.x = x;
         rect.y = y;
         rect.w = (int)univ->particles[i].size * state->scale;
         rect.h = (int)univ->particles[i].size * state->scale;
 
         SDL_RenderFillRect(state->renderer, &rect);
-
     }
 
     SDL_RenderPresent(state->renderer);

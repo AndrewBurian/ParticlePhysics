@@ -17,63 +17,63 @@
 #include "simulator.h"
 #include "universe.h"
 
-void handleInput(struct simulation *sim, struct universe *univ, struct renderstate *render)
+void handleInput(struct simulation *sim, struct universe *univ,
+		 struct renderstate *render)
 {
 
-    SDL_Event event;
+	SDL_Event event;
 
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
 
-        case SDL_QUIT:
-            sim->running = 0;
-            break;
+		case SDL_QUIT:
+			sim->running = 0;
+			break;
 
-        case SDL_KEYDOWN:
-            if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-                sim->running = 0;
-            }
-            break;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+				sim->running = 0;
+			}
+			break;
 
-            case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONDOWN:
 
-                if (event.button.button == SDL_BUTTON_LEFT) {
-                    sim->state = SIMULATION_PAN;
-                }
-                
-                break;
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				sim->state = SIMULATION_PAN;
+			}
 
-            case SDL_MOUSEBUTTONUP:
+			break;
 
-                if (event.button.button == SDL_BUTTON_LEFT) {
-                    sim->state = SIMULATION_NORMAL;
-                }
-                
-                break;
+		case SDL_MOUSEBUTTONUP:
 
-            case SDL_MOUSEMOTION:
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				sim->state = SIMULATION_NORMAL;
+			}
 
-                if (sim->state == SIMULATION_PAN) {
+			break;
 
-                    render->xPos += event.motion.xrel;
-                    render->yPos += event.motion.yrel;
-                    
-                }
-                
-                break;
+		case SDL_MOUSEMOTION:
 
-            case SDL_MOUSEWHEEL:
+			if (sim->state == SIMULATION_PAN) {
 
-                if (event.wheel.x + event.wheel.y < 0) {
-                    render->scale /= 1.1;
-                }
-                else {
-                    render->scale *= 1.1;
-                }
-                
-                break;
-                
-        }
-    }
+				render->xPos += event.motion.xrel;
+				render->yPos += event.motion.yrel;
+
+			}
+
+			break;
+
+		case SDL_MOUSEWHEEL:
+
+			if (event.wheel.x + event.wheel.y < 0) {
+				render->scale /= 1.1;
+			} else {
+				render->scale *= 1.1;
+			}
+
+			break;
+
+		}
+	}
 
 }
