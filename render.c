@@ -76,8 +76,8 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		    ((univ->particles[i].yPos + render->yPos) * render->scale) +
 		    (render->height / 2);
 
-		rect.w = (int)(univ->particles[i].size * render->scale);
-		rect.h = (int)(univ->particles[i].size * render->scale);
+		rect.w = (int)(univ->particles[i].size * 2 * render->scale);
+		rect.h = (int)(univ->particles[i].size * 2 * render->scale);
 		rect.x = x - (rect.w / 2);
 		rect.y = y - (rect.h / 2);
 

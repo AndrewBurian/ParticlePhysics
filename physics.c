@@ -175,7 +175,7 @@ int collideParticles(struct particle *a, struct particle *b)
 	// mass-weighted new position
 	a->xPos =
 	    ((a->xPos * a->mass) + (b->xPos * b->mass)) / (a->mass + b->mass);
-	a->xPos =
+	a->yPos =
 	    ((a->yPos * a->mass) + (b->yPos * b->mass)) / (a->mass + b->mass);
 
 	// conservation of momentum
