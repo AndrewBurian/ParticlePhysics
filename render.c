@@ -105,44 +105,30 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 void renderHUD(struct renderstate *render, struct simulation *sim,
 	       struct universe *univ)
 {
-/*
-    int scale_size = 50;
-    float pixelsPerMeter = 1;
 
-    char text[256];
-    // int w, h;
-    SDL_Surface *text_surface;
-    SDL_Rect text_position;
-    SDL_Color text_colour = { 255, 255, 255, 255 };
+	float pixelsPerMeter = univ->scale * render->scale;
+	int scale_size = 100;
+	char text[256];
+	SDL_Color text_colour = { 255, 255, 255, 255 };
 
-    SDL_SetRenderDrawColor(render->renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(render->renderer, 255, 255, 255, 255);
 
-    // Draw the scale in the bottom right corner
-    SDL_RenderDrawLine(render->renderer, render->width - 10,
-                       render->height - 10, render->width - 10,
-                       render->height - 20);
-    SDL_RenderDrawLine(render->renderer, render->width - 10,
-                       render->height - 15, render->width - 10 - scale_size,
-                       render->height - 15);
-    SDL_RenderDrawLine(render->renderer, render->width - 10 - scale_size,
-                       render->height - 10, render->width - 10 - scale_size,
-                       render->height - 20);
+	// Draw the scale in the bottom right corner
+	SDL_RenderDrawLine(render->renderer, render->width - 10,
+			   render->height - 10, render->width - 10,
+			   render->height - 20);
+	SDL_RenderDrawLine(render->renderer, render->width - 10,
+			   render->height - 15, render->width - 10 - scale_size,
+			   render->height - 15);
+	SDL_RenderDrawLine(render->renderer, render->width - 10 - scale_size,
+			   render->height - 10, render->width - 10 - scale_size,
+			   render->height - 20);
 
-    sprintf(text, "%.2fm", render->scale / pixelsPerMeter);
-    text_surface =
-        TTF_RenderText_Blended(render->font_small, text, text_colour);
-    text_position.x =
-        render->width - 10 - (text_surface->w / 2) - (scale_size / 2);
-    text_position.y = render->height - 20 - text_surface->h;
-    text_position.w = text_surface->w;
-    text_position.h = text_surface->h;
+	sprintf(text, "%.2fm", (1 / pixelsPerMeter) * scale_size);
 
-    SDL_RenderCopy(render->renderer,
-                   SDL_CreateTextureFromSurface(render->renderer,
-                                                text_surface), 0,
-                   &text_position);
-
-                   SDL_FreeSurface(text_surface);*/
+	renderText(render, render->font_small, text,
+		   render->width - 10 - (scale_size / 2), render->height - 25,
+		   FONT_CENTER, text_colour);
 
 	// Draw the pause symbol
 	if (sim->paused) {
