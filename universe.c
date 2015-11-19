@@ -74,7 +74,11 @@ void universeExpand(struct universe *univ)
 	int prev = univ->particleCount;
 
 	// double particle space
-	univ->particleCount *= 2;
+	if (!univ->particleCount) {
+		univ->particleCount = 1;
+	} else {
+		univ->particleCount *= 2;
+	}
 
 	univ->particles =
 	    realloc(univ->particles,
@@ -107,13 +111,13 @@ struct universe *universeInit(int size)
 	return univ;
 }
 
-int readFileLine(char *line, size_t * n, FILE * file)
+int readFileLine(char **line, size_t * n, FILE * file)
 {
 	int count = 0;
 	int i = 0;
 
 	while (1) {
-		count = getline(&line, n, file);
+		count = getline(line, n, file);
 
 		if (count == -1) {
 			return count;
@@ -124,8 +128,8 @@ int readFileLine(char *line, size_t * n, FILE * file)
 		}
 
 		for (i = 0; i < count; i++) {
-			if (line[i] == '#') {
-				line[i] = 0;
+			if ((*line)[i] == '#' || (*line)[i] == '\n') {
+				(*line)[i] = 0;
 				break;
 			}
 		}
@@ -144,8 +148,10 @@ struct universe *universeInitFromFile(FILE * file)
 
 	struct particle p = { 0 };
 
+	memset(univ, 0, sizeof(struct universe));
+
 	// read universe scale
-	if (readFileLine(line, &lineSize, file) == -1) {
+	if (readFileLine(&line, &lineSize, file) == -1) {
 		free(univ);
 		return 0;
 
@@ -156,7 +162,7 @@ struct universe *universeInitFromFile(FILE * file)
 		return 0;
 	}
 	// read universe speed
-	if (readFileLine(line, &lineSize, file) == -1) {
+	if (readFileLine(&line, &lineSize, file) == -1) {
 		free(univ);
 		return 0;
 	}
@@ -166,11 +172,11 @@ struct universe *universeInitFromFile(FILE * file)
 		return 0;
 	}
 	// read particles
-	while (readFileLine(line, &lineSize, file) != -1) {
+	while (readFileLine(&line, &lineSize, file) != -1) {
 		if (sscanf
 		    (line, "%d %lf %lf %lf %lf %lf %lf %lf",
 		     &p.isStationary, &p.xPos, &p.yPos, &p.xVel, &p.yVel,
-		     &p.mass, &p.charge, &p.size) == 9) {
+		     &p.mass, &p.charge, &p.size) == 8) {
 			addParticle(univ, &p);
 		}
 	}
@@ -200,7 +206,7 @@ void saveToFile(struct universe *univ)
 	for (i = 0; i < univ->nextParticle; i++) {
 		if (univ->particles[i].isActive) {
 			p = &univ->particles[i];
-			fprintf(file, "%d %lf %lf %lf %lf %lf %lf %lf",
+			fprintf(file, "%d %lf %lf %lf %lf %lf %lf %lf\n",
 				p->isStationary, p->xPos, p->yPos, p->xVel,
 				p->yVel, p->mass, p->charge, p->size);
 		}
