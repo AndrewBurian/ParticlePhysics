@@ -23,6 +23,7 @@ struct particle {
 
 struct universe {
 	double speed;		// s/tick
+	int fidelity;
 
 	struct particle *particles;
 	int particleCount;
