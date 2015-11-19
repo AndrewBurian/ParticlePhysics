@@ -82,16 +82,19 @@ int main(int argc, char **argv)
 	p.isStationary = 0;
 	p.xPos = -5;
 	p.yPos = -5;
-	p.xVel = 0;
-	p.mass = 10;
+	p.xVel = 0.001;
+	p.yVel = -0.0001;
+	p.mass = 60;
 	p.charge = 0;
-	p.size = 10;
 
+	setParticleSize(&p);
 	addParticle(univ, &p);
 
-	p.xPos = 620;
-	p.size = 10;
+	p.xVel = -0.001;
+	p.yVel = 0.0001;
+	p.xPos = 200;
 
+	setParticleSize(&p);
 	addParticle(univ, &p);
 
 	// run simulation

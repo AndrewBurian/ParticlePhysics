@@ -76,8 +76,12 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		    ((univ->particles[i].yPos + render->yPos) * render->scale) +
 		    (render->height / 2);
 
-		rect.w = (int)(univ->particles[i].size * render->scale);
-		rect.h = (int)(univ->particles[i].size * render->scale);
+		rect.w =
+		    (int)(univ->particles[i].size * render->scale *
+			  univ->scale);
+		rect.h =
+		    (int)(univ->particles[i].size * render->scale *
+			  univ->scale);
 		rect.x = x - (rect.w / 2);
 		rect.y = y - (rect.h / 2);
 
@@ -187,14 +191,14 @@ void renderHotParticle(struct renderstate *render, struct simulation *sim,
 			   x - (size / 4), y + (size / 4));
 
 	// Draw velocity
+	double distance = sqrt(pow(p.xVel, 2) + pow(p.yVel, 2));
+	double scale = 100 * render->scale * univ->scale;
 	SDL_SetRenderDrawColor(render->renderer, 0, 255, 0, 255);
-	SDL_RenderDrawLine(render->renderer, x, y, x + (p.xVel * 10),
-			   y + (p.yVel * 10));
-	sprintf(text, "(%.2f, %.2f)", p.xVel, p.yVel);
-	renderText(render, render->font_small, text, x + (p.xVel * 10),
-		   y + (p.yVel * 10), FONT_LEFT, text_unselected);
-
-	// Draw charge slider
+	SDL_RenderDrawLine(render->renderer, x, y, x + (p.xVel * scale),
+			   y + (p.yVel * scale));
+	sprintf(text, "%f m/s", distance);
+	renderText(render, render->font_small, text, x + (p.xVel * scale),
+		   y + (p.yVel * scale), FONT_LEFT, text_unselected);
 
 	// Draw the options and current one.
 	renderText(render, render->font_large, "Velocity", x, y + size,

@@ -43,6 +43,17 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				} else {
 					sim->paused = 1;
 				}
+			} else if (event.key.keysym.scancode ==
+				   SDL_SCANCODE_LEFT) {
+				render->xPos += 5 / render->scale;
+			} else if (event.key.keysym.scancode ==
+				   SDL_SCANCODE_RIGHT) {
+				render->xPos -= 5 / render->scale;
+			} else if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
+				render->yPos += 5 / render->scale;
+			} else if (event.key.keysym.scancode ==
+				   SDL_SCANCODE_DOWN) {
+				render->yPos -= 5 / render->scale;
 			}
 			break;
 
@@ -104,8 +115,7 @@ void handleInput(struct simulation *sim, struct universe *univ,
 						p.xForce = 0;
 						p.yForce = 0;
 						p.mass =
-						    1000000 * (1 /
-							       render->scale);
+						    100 * (1 / render->scale);
 						p.charge = 0;
 
 						setParticleSize(&p);
@@ -152,15 +162,19 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				double xDist = event.motion.x - x;
 				double yDist = event.motion.y - y;
 
-				p->xVel = xDist / 10;
-				p->yVel = yDist / 10;
+				xDist /= render->scale * univ->scale;
+				yDist /= render->scale * univ->scale;
+
+				p->xVel = xDist / 100;
+				p->yVel = yDist / 100;
 			}
 
 			break;
 
 		case SDL_MOUSEWHEEL:
 
-			if (sim->state == SIMULATION_UPDATEPARTICLE) {
+			if (sim->state == SIMULATION_UPDATEPARTICLE
+			    && sim->hotParticleState != HOTPARTICLE_VELOCITY) {
 				if (sim->hotParticleState == HOTPARTICLE_MASS) {
 					struct particle *p =
 					    &univ->particles[sim->hotParticle];

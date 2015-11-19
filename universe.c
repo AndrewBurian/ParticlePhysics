@@ -110,6 +110,7 @@ struct universe *universeInit(int size)
 	int i = 0;
 
 	struct universe *univ = malloc(sizeof(struct universe));
+	univ->scale = 100;
 	univ->speed = 1;
 	univ->particleCount = size;
 	univ->nextParticle = 0;
