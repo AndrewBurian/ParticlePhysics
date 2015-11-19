@@ -130,6 +130,11 @@ void renderHUD(struct renderstate *render, struct simulation *sim,
 		   render->width - 10 - (scale_size / 2), render->height - 25,
 		   FONT_CENTER, text_colour);
 
+	// Draw the seconds/second
+	sprintf(text, "%.2fs/s", univ->speed);
+	renderText(render, render->font_small, text,
+		   10, 30, FONT_LEFT, text_colour);
+
 	// Draw the pause symbol
 	if (sim->paused) {
 		SDL_Rect rect;
