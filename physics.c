@@ -187,7 +187,12 @@ int collideParticles(struct particle *a, struct particle *b)
 	a->isStationary += b->isStationary;
 
 	// size is a function of density and mass
-	a->size = sqrt(a->mass / DENSITY / M_PI);
+	setParticleSize(a);
 
 	return 1;
+}
+
+void setParticleSize(struct particle *p)
+{
+	p->size = sqrt(p->mass / DENSITY / M_PI);
 }
