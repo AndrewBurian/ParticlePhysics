@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <math.h>
 
 void addParticle(struct universe *univ, struct particle *p)
 {
@@ -62,8 +63,19 @@ void deleteParticle(struct universe *univ, struct particle *p)
 
 }
 
-struct particle *getParticle(double xPos, double yPos)
+struct particle *getParticle(struct universe *univ, double xPos, double yPos)
 {
+	int i;
+	struct particle *p;
+
+	for (i = 0; i < univ->nextParticle; i++) {
+		p = &univ->particles[i];
+		if (sqrt(pow(xPos - p->xPos, 2) + pow(yPos - p->yPos, 2)) <
+		    p->size) {
+			return p;
+		}
+	}
+
 	return 0;
 }
 
