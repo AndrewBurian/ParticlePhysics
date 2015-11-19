@@ -27,7 +27,7 @@ struct universe {
 
 	struct particle *particles;
 	int particleCount;
-	int highestParticle;
+	int nextParticle;
 };
 
 struct universe *universeInit(int);

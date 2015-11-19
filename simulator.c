@@ -82,9 +82,9 @@ int main(int argc, char **argv)
 	p.isStationary = 0;
 	p.xPos = 10;
 	p.yPos = 10;
-	p.xVel = 10;
+	p.xVel = 0;
 	p.mass = 10;
-	p.charge = 1;
+	p.charge = 0;
 	p.size = 10;
 
 	addParticle(univ, &p);

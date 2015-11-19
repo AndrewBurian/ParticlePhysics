@@ -24,8 +24,8 @@ void addParticle(struct universe *univ, struct particle *p)
 				univ->particles[i].isActive = 1;
 
 				// adjust highest particle if needed
-				if (i > univ->highestParticle) {
-					univ->highestParticle = i;
+				if (i == univ->nextParticle) {
+					univ->nextParticle = i + 1;
 				}
 				// particle added
 				break;
@@ -52,13 +52,13 @@ void deleteParticle(struct universe *univ, struct particle *p)
 	// adjust highest particle
 
 	// loop through the universe of active particles
-	for (i = univ->highestParticle; i > 0; i--) {
+	for (i = univ->nextParticle; i > 0; i--) {
 		if (univ->particles[i].isActive) {
 			break;
 		}
 	}
 
-	univ->highestParticle = i;
+	univ->nextParticle = i;
 
 }
 
@@ -96,7 +96,7 @@ struct universe *universeInit(int size)
 	univ->scale = 0.1;
 	univ->speed = 1;
 	univ->particleCount = size;
-	univ->highestParticle = 0;
+	univ->nextParticle = 0;
 
 	univ->particles = calloc(size, sizeof(struct particle));
 
@@ -197,7 +197,7 @@ void saveToFile(struct universe *univ)
 
 	fprintf(file, "%lf\n%lf\n", univ->scale, univ->speed);
 
-	for (i = 0; i < univ->highestParticle; i++) {
+	for (i = 0; i < univ->nextParticle; i++) {
 		if (univ->particles[i].isActive) {
 			p = &univ->particles[i];
 			fprintf(file, "%d %lf %lf %lf %lf %lf %lf %lf",

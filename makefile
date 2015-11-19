@@ -1,7 +1,7 @@
 APPNAME=particlesim
 LIBS=-lm -lSDL2
-LDFLAGS=-g
-CCFLAGS=-c -Werror -Wall
+LDFLAGS=
+CCFLAGS=-c -g -Werror -Wall
 
 all: $(APPNAME)
 
