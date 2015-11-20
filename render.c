@@ -103,7 +103,7 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		      render->yPos) * render->scale) + (render->height / 2);
 
 		double size =
-		    (int)(univ->particles[i].size * 2 * render->scale *
+		    (int)(univ->particles[i].size * render->scale *
 			  univ->scale);
 
 		if (size < 1) {
