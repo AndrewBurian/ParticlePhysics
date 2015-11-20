@@ -14,7 +14,7 @@ void renderHotParticle(struct renderstate *render, struct simulation *sim,
 void renderText(struct renderstate *render, TTF_Font * font,
 		const char *text, int x, int y, int flags, SDL_Color colour);
 
-struct renderstate *renderCreate(const char *title, int width, int height)
+struct renderstate *renderstateInit(const char *title, int width, int height)
 {
 
 	struct renderstate *render =
@@ -55,6 +55,76 @@ struct renderstate *renderCreate(const char *title, int width, int height)
 
 	// TODO(jordan): Generate different sized circles to draw the particles as.
 	// circle_count = 5;
+
+	return render;
+}
+
+struct renderstate *renderstateInitFromFile(FILE *file) {
+	char *line = 0;
+	size_t lineLength = 0;
+	char *title = 0;
+	size_t titleLength = 0;
+
+	int width, height;
+
+	struct renderstate *render;
+
+	// get title
+	if(readFileLine(&title, &titleLength, file) == -1) {
+		free(line);
+		free(title);
+		return 0;
+	}
+
+	// get width/height
+	if(readFileLine(&line, &lineLength, file) == -1) {
+		free(line);
+		free(title);
+		return 0;
+	}
+	if(sscanf(line, "%d %d", &width, &height) != 2) {
+		free(line);
+		free(title);
+		return 0;
+	}
+
+	// init the render so far
+	if(!(render = renderstateInit(title, width, height))) {
+		free(line);
+		free(title);
+		return render;
+	}
+
+	// get scale
+	if(readFileLine(&line, &lineLength, file) == -1) {
+		freeRenderstate(render);
+		free(line);
+		free(title);
+		return 0;
+	}
+	if(sscanf(line, "%f", &render->scale) != 1) {
+		freeRenderstate(render);
+		free(line);
+		free(title);
+		return 0;
+	}
+
+	// get x/y pos
+	if(readFileLine(&line, &lineLength, file) == -1) {
+		freeRenderstate(render);
+		free(line);
+		free(title);
+		return 0;
+	}
+	if(sscanf(line, "%lf %lf", &render->xPos, &render->yPos) != 2) {
+		freeRenderstate(render);
+		free(line);
+		free(title);
+		return 0;
+	}
+
+	free(line);
+	free(title);
 
 	return render;
 }
@@ -295,4 +365,12 @@ void renderText(struct renderstate *render, TTF_Font * font, const char *text,
 
 	SDL_DestroyTexture(text_texture);
 	SDL_FreeSurface(text_surface);
+}
+
+void renderToFile(struct renderstate *render, FILE *file)
+{
+	fprintf(file, "Saved universe\n");
+	fprintf(file, "%d %d\n", render->width, render->height);
+	fprintf(file, "%lf\n", render->scale);
+	fprintf(file, "%lf %lf\n", render->xPos, render->yPos);
 }

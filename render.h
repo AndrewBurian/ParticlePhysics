@@ -37,7 +37,10 @@ enum font_flags {
 	FONT_CENTER = 0x3,
 };
 
-struct renderstate *renderCreate(const char *title, int width, int height);
+struct renderstate *renderstateInit(const char *title, int width, int height);
+struct renderstate *renderstateInitFromFile(FILE *);
+void renderstateToFile(struct renderstate *, FILE *);
+void freeRenderstate(struct renderstate *);
 void renderUniverse(struct renderstate *, struct simulation *,
 		    struct universe *);
 
