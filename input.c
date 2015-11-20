@@ -57,10 +57,12 @@ handleInput(struct simulation *sim, struct universe *univ,
 				render->yPos -= 5 / render->scale;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_PLUS
+				   || event.key.keysym.scancode ==
+				   SDL_SCANCODE_EQUALS
 				   || (event.key.keysym.scancode ==
 				       SDL_SCANCODE_EQUALS
-				       && (event.key.keysym.mod & KMOD_SHIFT)))
-			{
+				       && (event.key.keysym.
+					   mod & KMOD_SHIFT))) {
 				univ->speed *= 1.1f;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_MINUS
