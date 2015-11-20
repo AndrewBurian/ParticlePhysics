@@ -1,5 +1,6 @@
 #include "render.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -58,12 +59,22 @@ struct renderstate *renderCreate(const char *title, int width, int height)
 	return render;
 }
 
-void
-renderUniverse(struct renderstate *render, struct simulation *sim,
+void renderUniverse(struct renderstate *render, struct simulation *sim,
 	       struct universe *univ)
 {
 	SDL_Rect rect;
 	int i;
+
+	int rb, g;
+
+	double maxCharge = 0;
+
+	for (i = 0; i < univ->nextParticle; i++) {
+		if (univ->particles[i].isActive
+		    && fabs(univ->particles[i].charge) > maxCharge) {
+			maxCharge = fabs(univ->particles[i].charge);
+		}
+	}
 
 	SDL_SetRenderDrawColor(render->renderer, 0, 0, 0, 255);
 	SDL_RenderClear(render->renderer);
@@ -107,6 +118,28 @@ renderUniverse(struct renderstate *render, struct simulation *sim,
 			rect.h = 2;
 		}
 
+		if (univ->particles[i].charge == 0) {
+			g = 255;
+			rb = 0;
+		} else if (fabs(univ->particles[i].charge) < maxCharge / 2.0) {
+			g = 255;
+			rb = (int)(255.0 *
+				   (fabs(univ->particles[i].charge) /
+				    (maxCharge / 2.0)));
+		} else {
+			rb = 255;
+			g = (int)(255.0 *
+				  ((maxCharge -
+				    fabs(univ->particles[i].charge)) /
+				   (maxCharge / 2.0)));
+		}
+
+		if (univ->particles[i].charge < 0) {
+			SDL_SetRenderDrawColor(render->renderer, 0, g, rb, 255);
+		} else {
+			SDL_SetRenderDrawColor(render->renderer, rb, g, 0, 255);
+		}
+
 		SDL_RenderFillRect(render->renderer, &rect);
 	}
 
@@ -117,8 +150,7 @@ renderUniverse(struct renderstate *render, struct simulation *sim,
 
 }
 
-void
-renderHUD(struct renderstate *render, struct simulation *sim,
+void renderHUD(struct renderstate *render, struct simulation *sim,
 	  struct universe *univ)
 {
 
@@ -179,8 +211,7 @@ renderHUD(struct renderstate *render, struct simulation *sim,
 	}
 }
 
-void
-renderHotParticle(struct renderstate *render, struct simulation *sim,
+void renderHotParticle(struct renderstate *render, struct simulation *sim,
 		  struct universe *univ)
 {
 	struct particle p;
@@ -238,8 +269,7 @@ renderHotParticle(struct renderstate *render, struct simulation *sim,
 
 }
 
-void
-renderText(struct renderstate *render, TTF_Font * font, const char *text,
+void renderText(struct renderstate *render, TTF_Font * font, const char *text,
 	   int x, int y, int flags, SDL_Color colour)
 {
 	SDL_Surface *text_surface;
