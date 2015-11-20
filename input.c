@@ -58,8 +58,8 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				   SDL_SCANCODE_KP_PLUS
 				   || (event.key.keysym.scancode ==
 				       SDL_SCANCODE_EQUALS
-				       && (event.key.
-					   keysym.mod & KMOD_SHIFT))) {
+				       && (event.key.keysym.
+					   mod & KMOD_SHIFT))) {
 				univ->speed *= 1.1f;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_MINUS
@@ -128,7 +128,8 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				if (sim->state ==
 				    SIMULATION_UPDATEPARTICLE_VELOCITY) {
 					sim->state = SIMULATION_UPDATEPARTICLE;
-				} else {
+				} else if (sim->state !=
+					   SIMULATION_UPDATEPARTICLE) {
 					if (sim->last_click_x == event.button.x
 					    && sim->last_click_y ==
 					    event.button.y) {
@@ -251,6 +252,7 @@ void handleInput(struct simulation *sim, struct universe *univ,
 			}
 
 			break;
+
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED
 			    || event.window.event == SDL_WINDOWEVENT_RESIZED) {

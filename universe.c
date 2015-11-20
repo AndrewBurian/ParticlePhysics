@@ -71,7 +71,7 @@ int getParticle(struct universe *univ, double xPos, double yPos)
 
 	for (i = 0; i < univ->nextParticle; i++) {
 		p = &univ->particles[i];
-		if (sqrt(pow(xPos - p->xPos, 2) + pow(yPos - p->yPos, 2)) <
+		if (sqrt(pow(xPos - p->xPos, 2) + pow(yPos - p->yPos, 2)) <=
 		    p->size) {
 			return i;
 		}
