@@ -58,8 +58,8 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				   SDL_SCANCODE_KP_PLUS
 				   || (event.key.keysym.scancode ==
 				       SDL_SCANCODE_EQUALS
-				       && (event.key.keysym.
-					   mod & KMOD_SHIFT))) {
+				       && (event.key.
+					   keysym.mod & KMOD_SHIFT))) {
 				univ->speed *= 1.1f;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_MINUS
@@ -76,7 +76,31 @@ void handleInput(struct simulation *sim, struct universe *univ,
 
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				if (sim->state == SIMULATION_NORMAL) {
-					sim->state = SIMULATION_PAN;
+
+					double x =
+					    ((event.button.x -
+					      (render->width / 2)) /
+					     render->scale) - render->xPos;
+					double y =
+					    ((event.button.y -
+					      (render->height / 2)) /
+					     render->scale) - render->yPos;
+
+					// Convert from pixels to meters
+					x /= univ->scale;
+					y /= univ->scale;
+
+					int p = getParticle(univ, x, y);
+					if (p != -1) {
+						sim->paused = 1;
+						sim->hotParticle = p;
+						sim->state =
+						    SIMULATION_UPDATEPARTICLE;
+						sim->hotParticleState =
+						    HOTPARTICLE_VELOCITY;
+					} else {
+						sim->state = SIMULATION_PAN;
+					}
 				} else if (sim->state ==
 					   SIMULATION_UPDATEPARTICLE) {
 					if (sim->hotParticleState ==
@@ -127,8 +151,12 @@ void handleInput(struct simulation *sim, struct universe *univ,
 						p.xForce = 0;
 						p.yForce = 0;
 						p.mass =
-						    100 * (1 / render->scale);
+						    1 * (1 / render->scale);
 						p.charge = 0;
+
+						// Convert from pixels to meters
+						p.xPos /= univ->scale;
+						p.yPos /= univ->scale;
 
 						setParticleSize(&p);
 
@@ -164,21 +192,25 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				struct particle *p =
 				    &univ->particles[sim->hotParticle];
 
+				// Convert the particle position into pixels
 				double x =
-				    ((p->xPos + render->xPos) * render->scale) +
+				    (((p->xPos * univ->scale) +
+				      render->xPos) * render->scale) +
 				    (render->width / 2);
 				double y =
-				    ((p->yPos + render->yPos) * render->scale) +
+				    (((p->yPos * univ->scale) +
+				      render->yPos) * render->scale) +
 				    (render->height / 2);
 
 				double xDist = event.motion.x - x;
 				double yDist = event.motion.y - y;
 
+				// Convert the distances to m/s
 				xDist /= render->scale * univ->scale;
 				yDist /= render->scale * univ->scale;
 
-				p->xVel = xDist / 100;
-				p->yVel = yDist / 100;
+				p->xVel = xDist / 10;
+				p->yVel = yDist / 10;
 			}
 
 			break;
@@ -218,6 +250,13 @@ void handleInput(struct simulation *sim, struct universe *univ,
 				}
 			}
 
+			break;
+		case SDL_WINDOWEVENT:
+			if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED
+			    || event.window.event == SDL_WINDOWEVENT_RESIZED) {
+				render->width = event.window.data1;
+				render->height = event.window.data2;
+			}
 			break;
 
 		}

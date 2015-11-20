@@ -64,7 +64,7 @@ void deleteParticle(struct universe *univ, struct particle *p)
 
 }
 
-struct particle *getParticle(struct universe *univ, double xPos, double yPos)
+int getParticle(struct universe *univ, double xPos, double yPos)
 {
 	int i;
 	struct particle *p;
@@ -73,11 +73,11 @@ struct particle *getParticle(struct universe *univ, double xPos, double yPos)
 		p = &univ->particles[i];
 		if (sqrt(pow(xPos - p->xPos, 2) + pow(yPos - p->yPos, 2)) <
 		    p->size) {
-			return p;
+			return i;
 		}
 	}
 
-	return 0;
+	return -1;
 }
 
 void universeExpand(struct universe *univ)
@@ -110,7 +110,7 @@ struct universe *universeInit(int size)
 	int i = 0;
 
 	struct universe *univ = malloc(sizeof(struct universe));
-	univ->scale = 100;
+	univ->scale = 1000;
 	univ->speed = 1;
 	univ->fidelity = 1;
 	univ->particleCount = size;

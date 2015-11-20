@@ -28,12 +28,14 @@ struct renderstate *renderCreate(const char *title, int width, int height)
 	}
 
 	if (SDL_CreateWindowAndRenderer
-	    (width, height, SDL_WINDOW_SHOWN, &render->window,
-	     &render->renderer) != 0) {
+	    (width, height,
+	     SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN,
+	     &render->window, &render->renderer) != 0) {
 		return 0;
 	}
 
 	SDL_SetWindowTitle(render->window, title);
+	SDL_GL_SetSwapInterval(1);
 
 	render->font_small = TTF_OpenFont("font.ttf", 8);
 	render->font_large = TTF_OpenFont("font.ttf", 12);
@@ -46,6 +48,9 @@ struct renderstate *renderCreate(const char *title, int width, int height)
 	render->yPos = 0;
 	render->width = width;
 	render->height = height;
+	render->frames = 0;
+	render->fps = 0;
+	render->last_frame = SDL_GetTicks();
 
 	// TODO(jordan): Generate different sized circles to draw the particles as.
 	// circle_count = 5;
@@ -64,17 +69,26 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 
 	SDL_SetRenderDrawColor(render->renderer, 255, 0, 0, 255);
 
+	// FPS
+	render->frames++;
+	if ((SDL_GetTicks() - render->last_frame) > 1000) {
+		render->fps = render->frames;
+		render->frames = 0;
+		render->last_frame += 1000;
+	}
+
 	for (i = 0; i < univ->particleCount; i++) {
 
 		if (!univ->particles[i].isActive) {
 			continue;
 		}
+
 		double x =
-		    ((univ->particles[i].xPos + render->xPos) * render->scale) +
-		    (render->width / 2);
+		    (((univ->particles[i].xPos * univ->scale) +
+		      render->xPos) * render->scale) + (render->width / 2);
 		double y =
-		    ((univ->particles[i].yPos + render->yPos) * render->scale) +
-		    (render->height / 2);
+		    (((univ->particles[i].yPos * univ->scale) +
+		      render->yPos) * render->scale) + (render->height / 2);
 
 		rect.w =
 		    (int)(univ->particles[i].size * 2 * render->scale *
@@ -85,11 +99,11 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		rect.x = x - (rect.w / 2);
 		rect.y = y - (rect.h / 2);
 
-		if (rect.w == 0) {
-			rect.w = 1;
+		if (rect.w < 2) {
+			rect.w = 2;
 		}
-		if (rect.h == 0) {
-			rect.h = 1;
+		if (rect.h < 2) {
+			rect.h = 2;
 		}
 
 		SDL_RenderFillRect(render->renderer, &rect);
@@ -131,9 +145,14 @@ void renderHUD(struct renderstate *render, struct simulation *sim,
 		   FONT_CENTER, text_colour);
 
 	// Draw the seconds/second
-	sprintf(text, "%.2fs/s", univ->speed);
+	sprintf(text, "%.2fs/s", render->fps * univ->speed);
 	renderText(render, render->font_small, text,
 		   10, 30, FONT_LEFT, text_colour);
+
+	// Draw the FPS
+	sprintf(text, "%d frame/s", render->fps);
+	renderText(render, render->font_small, text, 10, 45, FONT_LEFT,
+		   text_colour);
 
 	// Draw the pause symbol
 	if (sim->paused) {
@@ -168,9 +187,11 @@ void renderHotParticle(struct renderstate *render, struct simulation *sim,
 	p = univ->particles[sim->hotParticle];
 
 	double x =
-	    ((p.xPos + render->xPos) * render->scale) + (render->width / 2);
+	    (((p.xPos * univ->scale) + render->xPos) * render->scale) +
+	    (render->width / 2);
 	double y =
-	    ((p.yPos + render->yPos) * render->scale) + (render->height / 2);
+	    (((p.yPos * univ->scale) + render->yPos) * render->scale) +
+	    (render->height / 2);
 
 	double size = p.size * 2 * render->scale * univ->scale;
 
@@ -183,7 +204,7 @@ void renderHotParticle(struct renderstate *render, struct simulation *sim,
 
 	// Draw velocity
 	double distance = sqrt(pow(p.xVel, 2) + pow(p.yVel, 2));
-	double scale = 100 * render->scale * univ->scale;
+	double scale = 10 * render->scale * univ->scale;
 	SDL_SetRenderDrawColor(render->renderer, 0, 255, 0, 255);
 	SDL_RenderDrawLine(render->renderer, x, y, x + (p.xVel * scale),
 			   y + (p.yVel * scale));

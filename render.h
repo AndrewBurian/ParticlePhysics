@@ -25,6 +25,10 @@ struct renderstate {
 	// SDL_Surface *circles;
 	// int circle_count;
 
+	int frames;
+	int fps;
+	unsigned int last_frame;
+
 };
 
 enum font_flags {

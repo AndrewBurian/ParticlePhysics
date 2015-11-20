@@ -77,26 +77,6 @@ int main(int argc, char **argv)
 	// Create the simulation state
 	sim = simulationInit();
 
-	struct particle p = { 0 };
-	p.isActive = 1;
-	p.isStationary = 0;
-	p.xPos = -5;
-	p.yPos = -5;
-	p.xVel = 0.001;
-	p.yVel = -0.0001;
-	p.mass = 60;
-	p.charge = 0;
-
-	setParticleSize(&p);
-	addParticle(univ, &p);
-
-	p.xVel = -0.001;
-	p.yVel = 0.0001;
-	p.xPos = 200;
-
-	setParticleSize(&p);
-	addParticle(univ, &p);
-
 	// run simulation
 	simulateMode(render, univ, sim);
 
