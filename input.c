@@ -258,9 +258,9 @@ handleInput(struct simulation *sim, struct universe *univ,
                         &univ->particles[sim->hotParticle];
 
                     if (event.wheel.x + event.wheel.y < 0) {
-                        p->charge -= 0.000001;
+                        p->charge -= 0.0000001;
                     } else {
-                        p->charge += 0.000001;
+                        p->charge += 0.0000001;
                     }
 
                 }
