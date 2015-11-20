@@ -11,31 +11,34 @@
 #if !defined(SIMULATOR_H)
 #define SIMULATOR_H
 
-enum {
-	SIMULATION_NORMAL = 0x0,
-	SIMULATION_PAN = 0x1,
-	SIMULATION_UPDATEPARTICLE = 0x2,
-	SIMULATION_UPDATEPARTICLE_VELOCITY = 0x3,
+enum
+{
+  SIMULATION_NORMAL = 0x0,
+  SIMULATION_PAN = 0x1,
+  SIMULATION_UPDATEPARTICLE = 0x2,
+  SIMULATION_UPDATEPARTICLE_VELOCITY = 0x3,
 };
-enum {
-	HOTPARTICLE_VELOCITY = 0x0,
-	HOTPARTICLE_MASS = 0x1,
-	HOTPARTICLE_CHARGE = 0x2,
+enum
+{
+  HOTPARTICLE_VELOCITY = 0x0,
+  HOTPARTICLE_MASS = 0x1,
+  HOTPARTICLE_CHARGE = 0x2,
 
-	HOTPARTICLE_COUNT,
+  HOTPARTICLE_COUNT,
 };
 
-struct simulation {
+struct simulation
+{
 
-	int running;
-	int paused;
+  int running;
+  int paused;
 
-	int state;
-	int last_click_x;
-	int last_click_y;
+  int state;
+  int last_click_x;
+  int last_click_y;
 
-	int hotParticle;
-	int hotParticleState;
+  int hotParticle;
+  int hotParticleState;
 
 };
 

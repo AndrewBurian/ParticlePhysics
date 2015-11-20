@@ -7,11 +7,11 @@
 #define ELECTROSTATIC 8.987e+9L
 #define DENSITY 1000		// kg/m^2
 
-void physicsApply(struct universe *);
-void applyGravity(struct universe *);
-void applyElectric(struct universe *);
-void applyMovement(struct universe *);
-void applyCollision(struct universe *);
-void setParticleSize(struct particle *);
+void physicsApply (struct universe *);
+void applyGravity (struct universe *);
+void applyElectric (struct universe *);
+void applyMovement (struct universe *);
+void applyCollision (struct universe *);
+void setParticleSize (struct particle *);
 
 #endif
