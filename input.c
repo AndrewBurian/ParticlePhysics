@@ -36,6 +36,14 @@ handleInput(struct simulation *sim, struct universe *univ,
 			if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 				sim->running = 0;
 			} else if (event.key.keysym.scancode ==
+				   SDL_SCANCODE_RETURN) {
+				if (sim->paused
+				    && sim->state == SIMULATION_UPDATEPARTICLE
+				    && sim->hotParticle != -1) {
+					sim->hotParticle = -1;
+					sim->state = SIMULATION_NORMAL;
+				}
+			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_SPACE) {
 				if (sim->paused) {
 					sim->state = SIMULATION_NORMAL;
@@ -61,8 +69,8 @@ handleInput(struct simulation *sim, struct universe *univ,
 				   SDL_SCANCODE_EQUALS
 				   || (event.key.keysym.scancode ==
 				       SDL_SCANCODE_EQUALS
-				       && (event.key.keysym.
-					   mod & KMOD_SHIFT))) {
+				       && (event.key.
+					   keysym.mod & KMOD_SHIFT))) {
 				univ->speed *= 1.1f;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_MINUS
