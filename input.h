@@ -15,7 +15,6 @@
 #include "simulator.h"
 #include "universe.h"
 
-void handleInput (struct simulation *, struct universe *,
-		  struct renderstate *);
+void handleInput(struct simulation *, struct universe *, struct renderstate *);
 
 #endif
