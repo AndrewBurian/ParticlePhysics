@@ -11,6 +11,7 @@ struct renderstate {
 
 	SDL_Window *window;
 	SDL_Renderer *renderer;
+
 	TTF_Font *font_small;
 	TTF_Font *font_large;
 
@@ -20,10 +21,6 @@ struct renderstate {
 	float scale;
 	int width;
 	int height;
-
-	// circles are stored in orders of magnitude. First one has a radius of 1, then 10, 100, 1000, etc.
-	// SDL_Surface *circles;
-	// int circle_count;
 
 	int frames;
 	int fps;
