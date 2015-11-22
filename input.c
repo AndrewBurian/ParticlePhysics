@@ -69,8 +69,8 @@ handleInput(struct simulation *sim, struct universe *univ,
 				   SDL_SCANCODE_EQUALS
 				   || (event.key.keysym.scancode ==
 				       SDL_SCANCODE_EQUALS
-				       && (event.key.keysym.
-					   mod & KMOD_SHIFT))) {
+				       && (event.key.
+					   keysym.mod & KMOD_SHIFT))) {
 				univ->speed *= 1.1f;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_MINUS
@@ -89,6 +89,14 @@ handleInput(struct simulation *sim, struct universe *univ,
 			} else if (event.key.keysym.scancode == SDL_SCANCODE_S) {
 				sim->savingTime = 2 * render->fps;
 				saveToFile(render, univ);
+			} else if (event.key.keysym.scancode ==
+				   SDL_SCANCODE_BACKSPACE) {
+				if (sim->hotParticle != -1) {
+					deleteParticle(univ,
+						       &univ->particles[sim->
+									hotParticle]);
+					sim->hotParticle = -1;
+				}
 			}
 
 			break;
