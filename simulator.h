@@ -11,6 +11,9 @@
 #if !defined(SIMULATOR_H)
 #define SIMULATOR_H
 
+#include "render.h"
+#include "universe.h"
+
 enum {
 	SIMULATION_NORMAL = 0x0,
 	SIMULATION_PAN = 0x1,
@@ -38,5 +41,7 @@ struct simulation {
 	int hotParticleState;
 
 };
+
+//void saveToFile(struct renderstate *, struct universe *);
 
 #endif

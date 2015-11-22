@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <getopt.h>
 #include <stdio.h>
+#include <unistd.h>
 
 struct simulation *simulationInit();
 void simulateMode(struct renderstate *, struct universe *, struct simulation *);
@@ -56,23 +57,32 @@ int main(int argc, char **argv)
 			return -2;
 		}
 	}
-	// load universe
-	if (universeFile) {
+	// create universe and renderer
+	if (!universeFile) {
+
+		// new universe
+		univ = universeInit(10);
+
+		// new renderstate
+		render = renderstateInit("Particle Simulator", 640, 480);
+
+	} else {
+		render = renderstateInitFromFile(universeFile);
 		univ = universeInitFromFile(universeFile);
 		fclose(universeFile);
-	} else {
-		univ = universeInit(10);
 	}
 
+	// check for errors
 	if (!univ) {
 		fprintf(stderr, "Failed to initialize universe\n");
 		return -3;
+
 	}
-	// create the renderstate
-	render = renderCreate("Particle Simulator", 640, 480);
-	if (render == 0) {
+
+	if (!render) {
 		fprintf(stderr, "Failed to initialize the renderer\n");
 		return -4;
+
 	}
 	// Create the simulation state
 	sim = simulationInit();
@@ -113,7 +123,7 @@ struct simulation *simulationInit()
 	    (struct simulation *)malloc(sizeof(struct simulation));
 
 	sim->running = 0;
-	sim->paused = 0;
+	sim->paused = 1;
 
 	sim->state = SIMULATION_NORMAL;
 
@@ -122,4 +132,27 @@ struct simulation *simulationInit()
 	sim->last_click_y = -1;
 
 	return sim;
+}
+
+void saveToFile(struct renderstate *render, struct universe *univ)
+{
+
+	char fileName[20] = { 0 };
+	FILE *file = 0;
+	int fileCount, i;
+
+	for (fileCount = 1; fileCount < 999; i++) {
+		sprintf(fileName, "universe-%d.save", fileCount);
+		if (access(fileName, F_OK) == -1) {
+			// file does not exist
+			break;
+		}
+	}
+
+	file = fopen(fileName, "w");
+
+	renderstateToFile(render, file);
+	universeToFile(univ, file);
+
+	fclose(file);
 }

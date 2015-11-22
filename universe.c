@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <math.h>
 
 int addParticle(struct universe *univ, struct particle *p)
@@ -167,21 +166,25 @@ struct universe *universeInitFromFile(FILE * file)
 	// read universe speed
 	if (readFileLine(&line, &lineSize, file) == -1) {
 		free(univ);
+		free(line);
 		return 0;
 	}
 
 	if (sscanf(line, "%lf", &univ->speed) != 1) {
 		free(univ);
+		free(line);
 		return 0;
 	}
 	// universe fidelity
 	if (readFileLine(&line, &lineSize, file) == -1) {
 		free(univ);
+		free(line);
 		return 0;
 
 	}
 	if (sscanf(line, "%d", &univ->fidelity) != 1) {
 		free(univ);
+		free(line);
 		return 0;
 	}
 	// read particles
@@ -194,25 +197,15 @@ struct universe *universeInitFromFile(FILE * file)
 		}
 	}
 
+	free(line);
+
 	return univ;
 }
 
-void saveToFile(struct universe *univ)
+void universeToFile(struct universe *univ, FILE *file)
 {
-	char fileName[20] = { 0 };
-	FILE *file = 0;
-	int fileCount, i;
 	struct particle *p;
-
-	for (fileCount = 1; fileCount < 999; i++) {
-		sprintf(fileName, "universe-%d.save", fileCount);
-		if (access(fileName, F_OK) == -1) {
-			// file does not exist
-			break;
-		}
-	}
-
-	file = fopen(fileName, "w");
+	int i;
 
 	fprintf(file, "%lf\n%d\n", univ->speed, univ->fidelity);
 

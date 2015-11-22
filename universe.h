@@ -37,7 +37,9 @@ void universeExpand(struct universe *);
 int addParticle(struct universe *, struct particle *);
 void deleteParticle(struct universe *, struct particle *);
 int getParticle(struct universe *, double, double);
-void saveToFile(struct universe *);
+void universeToFile(struct universe *, FILE *);
 void freeUniverse(struct universe *);
+
+int readFileLine(char **, size_t *, FILE *);
 
 #endif
