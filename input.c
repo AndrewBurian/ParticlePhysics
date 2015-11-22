@@ -69,8 +69,8 @@ handleInput(struct simulation *sim, struct universe *univ,
 				   SDL_SCANCODE_EQUALS
 				   || (event.key.keysym.scancode ==
 				       SDL_SCANCODE_EQUALS
-				       && (event.key.keysym.
-					   mod & KMOD_SHIFT))) {
+				       && (event.key.
+					   keysym.mod & KMOD_SHIFT))) {
 				univ->speed *= 1.1f;
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_KP_MINUS
@@ -86,14 +86,17 @@ handleInput(struct simulation *sim, struct universe *univ,
 			} else if (event.key.keysym.scancode ==
 				   SDL_SCANCODE_PAGEUP) {
 				univ->fidelity++;
+			} else if (event.key.keysym.scancode == SDL_SCANCODE_S) {
+				sim->savingTime = 2 * render->fps;
+				saveToFile(render, univ);
 			}
 
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
 
-			sim->last_click_x = event.button.x;
-			sim->last_click_y = event.button.y;
+			sim->lastClickY = event.button.x;
+			sim->lastClickY = event.button.y;
 
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				if (sim->state == SIMULATION_NORMAL) {
@@ -151,8 +154,8 @@ handleInput(struct simulation *sim, struct universe *univ,
 					sim->state = SIMULATION_UPDATEPARTICLE;
 				} else if (sim->state !=
 					   SIMULATION_UPDATEPARTICLE) {
-					if (sim->last_click_x == event.button.x
-					    && sim->last_click_y ==
+					if (sim->lastClickY == event.button.x
+					    && sim->lastClickY ==
 					    event.button.y) {
 						struct particle p;
 

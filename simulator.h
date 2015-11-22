@@ -34,14 +34,18 @@ struct simulation {
 	int paused;
 
 	int state;
-	int last_click_x;
-	int last_click_y;
+	int lastClickX;
+	int lastClickY;
 
 	int hotParticle;
 	int hotParticleState;
 
+	int savingTime;
+
 };
 
-//void saveToFile(struct renderstate *, struct universe *);
+struct renderstate;
+struct universe;
+void saveToFile(struct renderstate *, struct universe *);
 
 #endif

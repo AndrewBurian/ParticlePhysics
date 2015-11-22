@@ -163,13 +163,23 @@ struct universe *universeInitFromFile(FILE * file)
 
 	memset(univ, 0, sizeof(struct universe));
 
+	// read universe scale
+	if (readFileLine(&line, &lineSize, file) == -1) {
+		free(univ);
+		free(line);
+		return 0;
+	}
+	if (sscanf(line, "%lf", &univ->scale) != 1) {
+		free(univ);
+		free(line);
+		return 0;
+	}
 	// read universe speed
 	if (readFileLine(&line, &lineSize, file) == -1) {
 		free(univ);
 		free(line);
 		return 0;
 	}
-
 	if (sscanf(line, "%lf", &univ->speed) != 1) {
 		free(univ);
 		free(line);
@@ -202,12 +212,13 @@ struct universe *universeInitFromFile(FILE * file)
 	return univ;
 }
 
-void universeToFile(struct universe *univ, FILE *file)
+void universeToFile(struct universe *univ, FILE * file)
 {
 	struct particle *p;
 	int i;
 
-	fprintf(file, "%lf\n%d\n", univ->speed, univ->fidelity);
+	fprintf(file, "%lf\n%lf\n%d\n", univ->scale, univ->speed,
+		univ->fidelity);
 
 	for (i = 0; i < univ->nextParticle; i++) {
 		if (univ->particles[i].isActive) {

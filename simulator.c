@@ -69,6 +69,13 @@ int main(int argc, char **argv)
 	} else {
 		render = renderstateInitFromFile(universeFile);
 		univ = universeInitFromFile(universeFile);
+
+		if (render == 0) {
+			fprintf(stderr, "Error loading rendering struct.\n");
+		}
+		if (univ == 0) {
+			fprintf(stderr, "Error loading universe struct.\n");
+		}
 		fclose(universeFile);
 	}
 
@@ -128,8 +135,10 @@ struct simulation *simulationInit()
 	sim->state = SIMULATION_NORMAL;
 
 	sim->hotParticle = -1;
-	sim->last_click_x = -1;
-	sim->last_click_y = -1;
+	sim->lastClickX = -1;
+	sim->lastClickX = -1;
+
+	sim->savingTime = -1;
 
 	return sim;
 }
@@ -139,9 +148,9 @@ void saveToFile(struct renderstate *render, struct universe *univ)
 
 	char fileName[20] = { 0 };
 	FILE *file = 0;
-	int fileCount, i;
+	int fileCount;
 
-	for (fileCount = 1; fileCount < 999; i++) {
+	for (fileCount = 1; fileCount < 999; fileCount++) {
 		sprintf(fileName, "universe-%d.save", fileCount);
 		if (access(fileName, F_OK) == -1) {
 			// file does not exist
