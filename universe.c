@@ -53,7 +53,7 @@ void deleteParticle(struct universe *univ, struct particle *p)
 	// adjust highest particle
 
 	// loop through the universe of active particles
-	for (i = univ->nextParticle; i > 0; i--) {
+	for (i = univ->nextParticle - 1; i > 0; i--) {
 		if (univ->particles[i].isActive) {
 			break;
 		}
