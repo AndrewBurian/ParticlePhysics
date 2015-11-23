@@ -91,11 +91,11 @@ void applyElectricPart(struct particle *a, struct particle *b)
 	double totalForce =
 	    ELECTROSTATIC * ((a->charge * b->charge) / pow(distance, 2));
 
-	a->xForce -= totalForce * xDist / distance;
-	a->yForce -= totalForce * yDist / distance;
+	a->xForce += totalForce * xDist / distance;
+	a->yForce += totalForce * yDist / distance;
 
-	b->xForce += totalForce * xDist / distance;
-	b->yForce += totalForce * yDist / distance;
+	b->xForce -= totalForce * xDist / distance;
+	b->yForce -= totalForce * yDist / distance;
 
 }
 
