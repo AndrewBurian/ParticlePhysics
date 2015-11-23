@@ -99,6 +99,7 @@ int main(int argc, char **argv)
 
 	// finished
 	freeUniverse(univ);
+	freeRenderstate(render);
 
 	return 0;
 }
