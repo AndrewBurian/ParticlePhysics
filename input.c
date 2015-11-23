@@ -93,8 +93,7 @@ handleInput(struct simulation *sim, struct universe *univ,
 				   SDL_SCANCODE_BACKSPACE) {
 				if (sim->hotParticle != -1) {
 					deleteParticle(univ,
-						       &univ->
-						       particles
+						       &univ->particles
 						       [sim->hotParticle]);
 					sim->hotParticle = -1;
 				}

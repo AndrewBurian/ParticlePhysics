@@ -150,8 +150,6 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 	SDL_SetRenderDrawColor(render->renderer, 0, 0, 0, 255);
 	SDL_RenderClear(render->renderer);
 
-	SDL_SetRenderDrawColor(render->renderer, 255, 0, 0, 255);
-
 	// FPS
 	render->frames++;
 	if ((SDL_GetTicks() - render->last_frame) > 1000) {
@@ -159,8 +157,7 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		render->frames = 0;
 		render->last_frame += 1000;
 	}
-
-	render->point_count = 0;
+	// render->point_count = 0;
 	for (i = 0; i < univ->nextParticle; i++) {
 
 		if (!univ->particles[i].isActive) {
@@ -209,8 +206,8 @@ void renderUniverse(struct renderstate *render, struct simulation *sim,
 		// SDL_RenderFillRect(render->renderer, &rect);
 	}
 
-	SDL_RenderDrawPoints(render->renderer, render->points,
-			     render->point_count);
+	// SDL_RenderDrawPoints(render->renderer, render->points,
+	// render->point_count);
 
 	renderHotParticle(render, sim, univ);
 	renderHUD(render, sim, univ);
@@ -383,7 +380,7 @@ void renderCircle(struct renderstate *render, int centerX, int centerY,
 
 	int left, right, top, bottom;
 	int x, y;
-	// int point_count = 0;
+	int point_count = 0;
 	double radius_squared = pow(radius, 2);
 
 	top = MAX(0, centerY - radius);
@@ -396,15 +393,15 @@ void renderCircle(struct renderstate *render, int centerX, int centerY,
 		for (y = top; y < bottom; y++) {
 			if ((pow(centerX - x, 2) + pow(centerY - y, 2)) <=
 			    radius_squared) {
-				render->points[render->point_count].x = x;
-				render->points[render->point_count].y = y;
-				render->point_count++;
+				render->points[point_count].x = x;
+				render->points[point_count].y = y;
+				point_count++;
 				// SDL_RenderDrawPoint(render->renderer, x, y);
 			}
 		}
 	}
 
-	// SDL_RenderDrawPoints(render->renderer, render->points, point_count);
+	SDL_RenderDrawPoints(render->renderer, render->points, point_count);
 }
 
 void renderstateToFile(struct renderstate *render, FILE * file)

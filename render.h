@@ -14,7 +14,7 @@ struct renderstate {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Point *points;
-	int point_count;
+	// int point_count;
 
 	TTF_Font *font_small;
 	TTF_Font *font_large;

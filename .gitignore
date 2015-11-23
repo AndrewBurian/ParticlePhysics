@@ -38,3 +38,6 @@ particlesim
 # Editor files
 *.swp
 *.sh
+
+# Other
+.other
